@@ -4,15 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | Demo Game</title>
-    <link rel="shortcut icon" href="Build/TemplateData/favicon.ico">
-    <link rel="stylesheet" href="Build/TemplateData/style.css">
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <div style="display: flex;">
-        <p style="font-size: larger; margin: 0 3rem 1rem 0;">Version 0.1.1</p>
-        <a href="" style="display: inline; color: black;">Patch Notes</a>
-      </div>
+      <p>Version 0.1.0</p>
       <canvas id="unity-canvas" width=960 height=600></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
@@ -59,7 +56,7 @@
         updateBannerVisibility();
       }
 
-      var buildUrl = "Build/Build";
+      var buildUrl = "Build";
       var loaderUrl = buildUrl + "/Build.loader.js";
       var config = {
         dataUrl: buildUrl + "/Build.data.unityweb",
