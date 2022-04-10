@@ -28,12 +28,17 @@ public class Ball : MonoBehaviour {
         //Debug.Log(Physics.GetIgnoreLayerCollision(7, 9));
         if (Input.GetKeyDown(KeyCode.R)) {
             Vector3 handPos = hand.transform.position;
-            ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, handPos.y));
+            ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
         }
 
         if (Input.GetMouseButtonUp(0)) {
             holding = false;
             shooting = true;
+            Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 n = new Vector2(mouse.x - ball_Rigidbody2D.position.x, mouse.y - ball_Rigidbody2D.position.y);
+            n = n.normalized;
+            ball_Rigidbody2D.AddForce(n);
+            Debug.Log(n);
         }
 
         if (holding) {
@@ -49,7 +54,6 @@ public class Ball : MonoBehaviour {
                 shooting = false;
             }
         }
-        Debug.Log(shootTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
