@@ -6,6 +6,8 @@ TagManager:
   tags:
   - HoopTop
   - HoopBottom
+  - Hand
+  - Arm
   layers:
   - Default
   - TransparentFX
@@ -16,7 +18,7 @@ TagManager:
   - 
   - Ball
   - Body
-  - 
+  - ArmHand
   - 
   - 
   - 
