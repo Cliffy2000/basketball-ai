@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
         movement = Input.GetAxisRaw("Horizontal");
 
         // The model would lean a little on horizontal move, thus jump check must not be at 0
+        // TODO: rework jump check
         if (Input.GetButtonDown("Jump") && p_Rigidbody2D.velocity.y >= -0.01)
         {
             p_Rigidbody2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
