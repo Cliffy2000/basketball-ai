@@ -43,9 +43,17 @@ public class PlayerController : MonoBehaviour
         Vector2 v = p_Rigidbody2D.velocity;
         v.x = movement * runSpeed;
 
+        // Flips player facing according to mouse location
+        Vector3 difference = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        difference.Normalize();     // normalizing the vector. Meaning that all the sum of the vector will be equal to 1
+        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;   // find the angle in degrees
+
         Vector3 scale = transform.localScale;
-        if ((v.x > 0 && scale.x < 0) || (v.x < 0 && scale.x > 0))
-        {
+
+        if (Mathf.Abs(rotZ) <= 90 && scale.x < 0) {
+            // triggers on facing right
+            transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
+        } else if (Mathf.Abs(rotZ) > 90 && scale.x > 0) {
             transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
         }
 

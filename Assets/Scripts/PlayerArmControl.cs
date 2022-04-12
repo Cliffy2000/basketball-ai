@@ -16,5 +16,6 @@ public class PlayerArmControl : MonoBehaviour
 
 		float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;   // find the angle in degrees
 		transform.rotation = Quaternion.Euler(0f, 0f, rotZ + rotationOffset);
+		Debug.Log(rotZ);
 	}
 }
