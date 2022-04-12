@@ -6,15 +6,20 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D p_Rigidbody2D;
     private SpriteRenderer p_SpriteRenderer;
+    private Animator p_Animator;
 
     public float runSpeed = 10f;
     public float jumpForce = 15f;
-    float movement;
+    public float movement;
+
+    public int jumpCount = 0;
+    public readonly int maxJumpCount = 1;
 
     private void Start()
     {
         p_Rigidbody2D = GetComponent<Rigidbody2D>();
         p_SpriteRenderer = GetComponent<SpriteRenderer>();
+        p_Animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -22,11 +27,11 @@ public class PlayerController : MonoBehaviour
     {
         movement = Input.GetAxisRaw("Horizontal");
 
-        // The model would lean a little on horizontal move, thus jump check must not be at 0
         // TODO: rework jump check
-        if (Input.GetButtonDown("Jump") && p_Rigidbody2D.velocity.y >= -0.01)
+        if (Input.GetButtonDown("Jump") && jumpCount < maxJumpCount)
         {
             p_Rigidbody2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            jumpCount++;
         }
 
         /*
@@ -46,7 +51,13 @@ public class PlayerController : MonoBehaviour
 
         p_Rigidbody2D.velocity = v;
 
+        p_Animator.SetBool("Run", (Mathf.Abs(v.x) >= 0.01));
+        p_Animator.SetBool("Jump", jumpCount > 0);
     }
 
-
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag("Ground")) {
+            jumpCount = 0;
+        }
+    }
 }

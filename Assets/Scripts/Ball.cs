@@ -41,7 +41,7 @@ public class Ball : MonoBehaviour {
         }
 
         // Shoot the ball on mouse left release
-        if (Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp(0) && holding) {
             holding = false;
             shooting = true;
             Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
