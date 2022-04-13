@@ -27,12 +27,10 @@ public class Ball : MonoBehaviour {
 
     private SpriteRenderer ball_SpriteRenderer;
     private Rigidbody2D ball_Rigidbody2D;
-    private CircleCollider2D ball_CircleCollider2D;
 
     private void Start() {
         ball_SpriteRenderer = GetComponent<SpriteRenderer>();
         ball_Rigidbody2D = GetComponent<Rigidbody2D>();
-        ball_CircleCollider2D = GetComponent<CircleCollider2D>();
 
         shootTimeAfter = SHOOTTIMEAFTER;
     }
@@ -41,6 +39,8 @@ public class Ball : MonoBehaviour {
         // Reset the ball position and clear velocity
         if (Input.GetKeyDown(KeyCode.R)) {
             holding = false;
+            // TODO
+            Physics2D.IgnoreLayerCollision(7, 9, false);
             Vector3 handPos = hand.transform.position;
             ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
             ball_Rigidbody2D.velocity = new Vector2(0, 0);
@@ -50,8 +50,6 @@ public class Ball : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && holding) {
             shootTime = Time.time;
         }
-
-        Debug.Log(shootTime);
 
         // Shoot the ball on mouse left release
         if (Input.GetMouseButtonUp(0)) {
@@ -105,7 +103,7 @@ public class Ball : MonoBehaviour {
         }
 
         if (collision.CompareTag("Hand")) {
-            this.holding = true;
+            holding = true;
             Physics2D.IgnoreLayerCollision(7, 9);
         }
     }
