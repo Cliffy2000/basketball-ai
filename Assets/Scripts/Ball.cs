@@ -18,7 +18,7 @@ public class Ball : MonoBehaviour {
     private readonly float SHOOTTIMEAFTER = 1f;
 
     private float greenTime;
-    private readonly float GREENTIME;
+    private readonly float GREENTIME = 1f;
     private bool green = false;
 
     public GameObject hand;
@@ -86,7 +86,7 @@ public class Ball : MonoBehaviour {
         }
 
         if (green) {
-            if (Time.time - greenTime > 2f) {
+            if (Time.time - greenTime > GREENTIME) {
                 ball_SpriteRenderer.color = new Color(1, 1, 1, 1);
                 green = false;
             }
