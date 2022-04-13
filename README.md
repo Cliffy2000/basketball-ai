@@ -3,6 +3,15 @@
 This is the repository for the testing environnment of a game designed for genetic algorithm training.
 
 ## Patch Notes
+### 0.3.0
+- Playable version released
+
+### 0.2.4
+- Changed editor version to avoid animator controller freezing bug.
+
+### 0.2.3
+- Added player animations to the game.
+
 ### 0.2.2
 - Shifted logic so that arm-ball collision is disbaled when holding ball. 
 - Fixed ball reset issues. 
