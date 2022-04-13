@@ -11,7 +11,7 @@ public class Ball : MonoBehaviour {
 
     // Set of variables to record if the ball is being shot and how long it has been
     private bool shooting = false;
-    private float shootTime;
+    private float shootTime = -1f;
     private readonly float SHOOTTIME = 1.5f;
     public float maxShootForce = 12f;
     private float shootTimeAfter;
@@ -40,6 +40,7 @@ public class Ball : MonoBehaviour {
     void Update() {
         // Reset the ball position and clear velocity
         if (Input.GetKeyDown(KeyCode.R)) {
+            holding = false;
             Vector3 handPos = hand.transform.position;
             ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
             ball_Rigidbody2D.velocity = new Vector2(0, 0);
@@ -50,9 +51,11 @@ public class Ball : MonoBehaviour {
             shootTime = Time.time;
         }
 
+        Debug.Log(shootTime);
+
         // Shoot the ball on mouse left release
         if (Input.GetMouseButtonUp(0)) {
-            if (holding) {
+            if (holding && shootTime != -1) {
                 holding = false;
                 shooting = true;
                 Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -65,9 +68,7 @@ public class Ball : MonoBehaviour {
 
                 Vector2 f = direction * maxShootForce * timeElapsed;
                 ball_Rigidbody2D.AddForce(f);
-                Debug.Log(direction.magnitude);
-                Debug.Log(f.magnitude);
-                shootTime = -1;
+                shootTime = -1f;
             }
         }
 
