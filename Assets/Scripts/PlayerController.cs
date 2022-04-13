@@ -10,9 +10,9 @@ public class PlayerController : MonoBehaviour
 
     public float runSpeed = 10f;
     public float jumpForce = 15f;
-    public float movement;
+    private float movement;
 
-    public int jumpCount = 0;
+    private int jumpCount = 0;
     public readonly int maxJumpCount = 1;
 
     private void Start()
@@ -48,19 +48,22 @@ public class PlayerController : MonoBehaviour
         difference.Normalize();     // normalizing the vector. Meaning that all the sum of the vector will be equal to 1
         float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;   // find the angle in degrees
 
-        Vector3 scale = transform.localScale;
+        bool faceRight = Mathf.Abs(rotZ) <= 90;
 
-        if (Mathf.Abs(rotZ) <= 90 && scale.x < 0) {
+        Vector3 scale = transform.localScale;
+        
+        if (faceRight && scale.x < 0) {
             // triggers on facing right
             transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
-        } else if (Mathf.Abs(rotZ) > 90 && scale.x > 0) {
+        } else if (!faceRight && scale.x > 0) {
             transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
         }
 
         p_Rigidbody2D.velocity = v;
 
-        p_Animator.SetBool("Run", (Mathf.Abs(v.x) >= 0.01));
+        p_Animator.SetFloat("Speed", v.magnitude);
         p_Animator.SetBool("Jump", jumpCount > 0);
+        p_Animator.SetBool("FaceForward", faceRight == (v.x>0));
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
