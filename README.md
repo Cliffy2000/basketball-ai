@@ -8,6 +8,7 @@ This is the repository for the testing environnment of a game designed for genet
 
 ### 0.2.4
 - Changed editor version to avoid animator controller freezing bug.
+- Allowed the ball to change color back after scoring.
 
 ### 0.2.3
 - Added player animations to the game.
