@@ -3,6 +3,12 @@
 This is the repository for the testing environnment of a game designed for genetic algorithm training.
 
 ## Patch Notes
+### 0.3.2
+- Fixed a bug where the player will no longer be able to touch the ball.
+
+### 0.3.1
+- Fixed a bug that allows the player to ready a shot when the ball is not in hand.
+
 ### 0.3.0
 - Playable version released
 
