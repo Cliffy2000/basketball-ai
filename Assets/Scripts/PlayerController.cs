@@ -4,49 +4,42 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D p_Rigidbody2D;
-    private SpriteRenderer p_SpriteRenderer;
-    private Animator p_Animator;
+    // Player components
+    private Rigidbody2D player_Rigidbody2D;
+    private Animator player_Animator;
 
-    public float runSpeed = 10f;
-    public float jumpForce = 15f;
-    private float movement;
+    // Other GameObjects
+    public GameObject hand;
+    public GameObject ball;
 
-    private int jumpCount = 0;
-    public readonly int maxJumpCount = 1;
+    // Player parameters
+    public float runParam = 10f;
+    public float jumpParam = 15f;
 
-    private void Start()
-    {
-        p_Rigidbody2D = GetComponent<Rigidbody2D>();
-        p_SpriteRenderer = GetComponent<SpriteRenderer>();
-        p_Animator = GetComponent<Animator>();
+    private float inputX;
+    private bool grounded = true;
+
+    private void Start() {
+        player_Rigidbody2D = GetComponent<Rigidbody2D>();
+        player_Animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    private void Update()
-    {
-        movement = Input.GetAxisRaw("Horizontal");
+    private void Update() {
+        inputX = Input.GetAxisRaw("Horizontal");
 
-        // TODO: rework jump check
-        if (Input.GetButtonDown("Jump") && jumpCount < maxJumpCount)
-        {
-            p_Rigidbody2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-            jumpCount++;
+        // defaulting to single jump
+        if(Input.GetButtonDown("Jump") && grounded) {
+            player_Rigidbody2D.AddForce(new Vector2(0, jumpParam), ForceMode2D.Impulse);
         }
 
-        /*
-        Vector2 newPosition = p_Rigidbody2D.position;
-        newPosition.x += movement * Time.fixedDeltaTime * runSpeed;
-        p_Rigidbody2D.MovePosition(newPosition);
-        */
-
-        Vector2 v = p_Rigidbody2D.velocity;
-        v.x = movement * runSpeed;
+        Vector2 v = player_Rigidbody2D.velocity;
+        v.x = inputX * runParam;
 
         // Flips player facing according to mouse location
         Vector3 difference = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        difference.Normalize();     // normalizing the vector. Meaning that all the sum of the vector will be equal to 1
-        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;   // find the angle in degrees
+        //difference.Normalize();
+        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
 
         bool faceRight = Mathf.Abs(rotZ) <= 90;
 
@@ -59,16 +52,23 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(scale.x * -1, scale.y, scale.z);
         }
 
-        p_Rigidbody2D.velocity = v;
+        player_Rigidbody2D.velocity = v;
 
-        p_Animator.SetFloat("Speed", v.magnitude);
-        p_Animator.SetBool("Jump", jumpCount > 0);
-        p_Animator.SetBool("FaceForward", faceRight == (v.x>0));
+        // Set parameters for animation controller
+        player_Animator.SetFloat("Speed", v.magnitude);
+        player_Animator.SetBool("Jump", !grounded);
+        player_Animator.SetBool("FaceForward", faceRight == (v.x>0));
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Ground")) {
-            jumpCount = 0;
+            grounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag("Ground")) {
+            grounded = false;
         }
     }
 }
