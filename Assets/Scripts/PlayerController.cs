@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     public GameObject hand;
     public GameObject ball;
     private Rigidbody2D ball_Rigidbody2D;
-    private Ball ball_Script;
 
     // Player parameters
     public float runParam = 10f;
@@ -38,7 +37,6 @@ public class PlayerController : MonoBehaviour
         player_Rigidbody2D = GetComponent<Rigidbody2D>();
         player_Animator = GetComponent<Animator>();
         ball_Rigidbody2D = ball.GetComponent<Rigidbody2D>();
-        ball_Script = ball.GetComponent<Ball>();
     }
 
     // Update is called once per frame
@@ -80,7 +78,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonUp(0)) {
             float timeDiff = Time.time - shootTime;
             // Mouse down is click
-            if (timeDiff < SHOOTTIMEMIN && shootTime != 0) {
+            if (timeDiff < SHOOTTIMEMIN && shootTime != 0f) {
                 // Stand still but not shoot
                 // Disable dribbling
                 dribbling = false;
@@ -88,7 +86,8 @@ public class PlayerController : MonoBehaviour
             }
 
             // Mouse is held down
-            else if (holding && shootTime != 0) {
+            else if (holding && shootTime != 0f) {
+                Debug.Log(Time.time - shootTime);
                 // Shoot the ball
                 // Calculate shooting direction
                 holding = false;
@@ -97,11 +96,11 @@ public class PlayerController : MonoBehaviour
                 shootDirection.Normalize();
 
                 // Scale the force applied on the ball with the mouse down time
-                float shootForceScale = Mathf.Min(shootTime, SHOOTTIME) + BASESHOOTTIME;
+                float shootForceScale = Mathf.Min(Time.time - shootTime, SHOOTTIME) + BASESHOOTTIME;
                 Vector2 shootForce = shootForceScale * shootParam * shootDirection;
                 ball_Rigidbody2D.AddForce(shootForce);
-                shootTime = 0f;
             }
+            shootTime = 0f;
         }
 
         if (holding) {
