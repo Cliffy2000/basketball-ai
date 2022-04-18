@@ -22,7 +22,6 @@ public class Ball : MonoBehaviour {
     private bool green = false;
 
     public GameObject hand;
-    public GameObject arm;
     public GameObject body;
 
     private SpriteRenderer ball_SpriteRenderer;
