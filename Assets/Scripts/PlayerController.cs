@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public GameObject hand;
     public GameObject ball;
     private Rigidbody2D ball_Rigidbody2D;
+    private Ball ball_Script;
 
     // Player parameters
     public float runParam = 10f;
@@ -21,7 +22,7 @@ public class PlayerController : MonoBehaviour
 
     // Game Logic variables
     private bool grounded = true;
-    private bool holding = false;
+    public bool holding = false;
     private bool shooting = false;
     private float shootTime = 0f;
     private readonly float SHOOTTIME = 1.5f;
@@ -37,11 +38,13 @@ public class PlayerController : MonoBehaviour
         player_Rigidbody2D = GetComponent<Rigidbody2D>();
         player_Animator = GetComponent<Animator>();
         ball_Rigidbody2D = ball.GetComponent<Rigidbody2D>();
+        ball_Script = ball.GetComponent<Ball>();
     }
 
     // Update is called once per frame
     private void Update() {
         inputX = Input.GetAxisRaw("Horizontal");
+
 
         // defaulting to single jump
         if(Input.GetButtonDown("Jump") && grounded) {
@@ -105,8 +108,7 @@ public class PlayerController : MonoBehaviour
             // Set the position, speed and angular velocity to the same as the hand
             // Angular velocity is included to hopefully make swinging the arm have an impact
             ball.transform.position = hand.transform.position;
-            ball_Rigidbody2D.velocity = hand.GetComponent<Rigidbody2D>().velocity;
-            ball_Rigidbody2D.angularVelocity = hand.GetComponent<Rigidbody2D>().angularVelocity;
+            ball_Rigidbody2D.velocity = player_Rigidbody2D.velocity;
         }
 
         if (shooting) {
