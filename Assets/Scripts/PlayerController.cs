@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float runParam = 10f;
     public float jumpParam = 15f;
     public float shootParam = 12f;
+    public float dribbleParam = 2f;
     private float inputX;
 
     // Game Logic variables
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
     private readonly float BASESHOOTTIME = 0.5f;
     private float shootTImeAfter;
     private readonly float SHOOTTIMEAFTER = 1f;
-    private bool dribbling = false;
+    public bool dribbling = false;
     private bool stopped = false;
 
 
@@ -42,7 +43,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update() {
         inputX = Input.GetAxisRaw("Horizontal");
-
 
         // defaulting to single jump
         if(Input.GetButtonDown("Jump") && grounded) {
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
 
         // =====================
 
-        if (Input.GetMouseButtonDown(0) && holding) {
+        if (Input.GetMouseButtonDown(0) && (holding||dribbling)) {
             shootTime = Time.time;
         }
         
@@ -81,8 +81,10 @@ public class PlayerController : MonoBehaviour
             if (timeDiff < SHOOTTIMEMIN && shootTime != 0f) {
                 // Stand still but not shoot
                 // Disable dribbling
+                holding = true;
                 dribbling = false;
                 stopped = true;
+                Debug.Log(dribbling);
             }
 
             // Mouse is held down
@@ -118,6 +120,12 @@ public class PlayerController : MonoBehaviour
                 Physics2D.IgnoreLayerCollision(7, 9, false);
                 shootTImeAfter = SHOOTTIMEAFTER;
                 shooting = false;
+            }
+        }
+
+        if (dribbling) {
+            if (ball.transform.position.y >= hand.transform.position.y) {
+                ball_Rigidbody2D.AddForce(new(0, -dribbleParam));
             }
         }
     }

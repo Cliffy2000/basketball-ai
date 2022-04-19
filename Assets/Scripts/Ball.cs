@@ -27,6 +27,7 @@ public class Ball : MonoBehaviour {
         // Reset the ball position and clear velocity
         if (Input.GetKeyDown(KeyCode.R)) {
             player_Script.holding = false;
+            player_Script.dribbling = false;
             // Resets the ball position and related vectors
             // Also restores collision
             Physics2D.IgnoreLayerCollision(7, 9, false);
@@ -43,6 +44,11 @@ public class Ball : MonoBehaviour {
                 green = false;
             }
         }
+
+        // if dribbling, constrain ball x to hand x
+        if (player_Script.dribbling) {
+            transform.position = new(hand.transform.position.x, transform.position.y);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -57,7 +63,11 @@ public class Ball : MonoBehaviour {
         }
 
         if (collision.CompareTag("Hand")) {
-            player_Script.holding = true;
+            // set initial speed of dribbling on contact
+            if (!player_Script.dribbling) {
+                ball_Rigidbody2D.velocity = new(0, -1);
+            }
+            player_Script.dribbling = true;
             Physics2D.IgnoreLayerCollision(7, 9);
         }
     }
