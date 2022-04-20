@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0.008726558, y: 0, z: 0, w: 0.999962}
   m_LocalPosition: {x: -4.88, y: 5.26, z: -0.01}
   m_LocalScale: {x: 2.6913905, y: 2.6913905, z: 2.6913905}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -45,6 +46,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -113,8 +115,8 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.001
-  m_LinearDrag: 0
+  m_Mass: 0.01
+  m_LinearDrag: 0.2
   m_AngularDrag: 0.05
   m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: 1d0ab5857e3115043aaec7ec4da68de1, type: 2}
@@ -134,6 +136,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319d1fe69a15e4e4bab60b48b5948014, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holding: 0
   hand: {fileID: 0}
-  arm: {fileID: 0}
+  body: {fileID: 0}

@@ -16,11 +16,13 @@ public class Ball : MonoBehaviour {
     private SpriteRenderer ball_SpriteRenderer;
     private Rigidbody2D ball_Rigidbody2D;
     private PlayerController player_Script;
+    private Collider2D hand_Collider;
 
     private void Start() {
         ball_SpriteRenderer = GetComponent<SpriteRenderer>();
         ball_Rigidbody2D = GetComponent<Rigidbody2D>();
         player_Script = body.GetComponent<PlayerController>();
+        hand_Collider = hand.GetComponent<Collider2D>();
     }
 
     void Update() {
@@ -28,9 +30,9 @@ public class Ball : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.R)) {
             player_Script.holding = false;
             player_Script.dribbling = false;
+            hand_Collider.isTrigger = true;
             // Resets the ball position and related vectors
             // Also restores collision
-            Physics2D.IgnoreLayerCollision(7, 9, false);
             Vector3 handPos = hand.transform.position;
             ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
             ball_Rigidbody2D.velocity = new Vector2(0, 0);
@@ -48,6 +50,12 @@ public class Ball : MonoBehaviour {
         // if dribbling, constrain ball x to hand x
         if (player_Script.dribbling) {
             transform.position = new(hand.transform.position.x, transform.position.y);
+            // in case the ball goes above the hand let the ball pass through
+            if (transform.position.y > hand.transform.position.y) {
+                hand_Collider.isTrigger = true;
+            } else {
+                hand_Collider.isTrigger = false;
+            }
         }
     }
 
@@ -63,12 +71,30 @@ public class Ball : MonoBehaviour {
         }
 
         if (collision.CompareTag("Hand")) {
-            // set initial speed of dribbling on contact
+            // Catch the ball
             if (!player_Script.dribbling) {
-                ball_Rigidbody2D.velocity = new(0, -1);
+                player_Script.holding = true;
+                hand_Collider.isTrigger = true;
             }
-            player_Script.dribbling = true;
-            Physics2D.IgnoreLayerCollision(7, 9);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if (player_Script.dribbling && (transform.position.y < hand.transform.position.y)) {
+            hand_Collider.isTrigger = false; 
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        // Activates only when the hand is not a trigger (dribbling)
+        // Gives the ball downward dribbling force
+        if (collision.gameObject.CompareTag("Hand")  && player_Script.dribbling) {
+            float dribbleScale = 0.5f + Mathf.Abs(player_Script.rotZ + 90) / 60;
+            ball_Rigidbody2D.AddForce(new(0, -player_Script.dribbleParam*dribbleScale));
+        }
+
+        if (collision.gameObject.CompareTag("Ground") && player_Script.dribbling) {
+            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam / 3));
         }
     }
 }
