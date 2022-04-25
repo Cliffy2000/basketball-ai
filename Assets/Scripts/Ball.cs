@@ -31,8 +31,6 @@ public class Ball : MonoBehaviour {
         // Reset the ball position and clear velocity
         if (Input.GetKeyDown(KeyCode.R)) {
             reset = true;
-            player_Script.holding = false;
-            player_Script.dribbling = false;
             hand_Collider.isTrigger = true;
         }
 
@@ -67,7 +65,7 @@ public class Ball : MonoBehaviour {
             // Resets the ball position and related vectors
             // Also restores collision
             Vector3 handPos = hand.transform.position;
-            ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
+            ball_Rigidbody2D.position = new Vector2(10, 4);
             ball_Rigidbody2D.velocity = new Vector2(0, 0);
             ball_Rigidbody2D.angularVelocity = 0f;
         }
@@ -108,11 +106,11 @@ public class Ball : MonoBehaviour {
         // Gives the ball downward dribbling force
         if (collision.gameObject.CompareTag("Hand")  && player_Script.dribbling) {
             float dribbleScale = 0.5f + Mathf.Abs(player_Script.rotZ + 90) / 60;
-            ball_Rigidbody2D.AddForce(new(0, -player_Script.dribbleParam*dribbleScale));
+            ball_Rigidbody2D.AddForce(new(0, -player_Script.dribbleParam*dribbleScale), ForceMode2D.Impulse);
         }
 
         if (collision.gameObject.CompareTag("Ground") && player_Script.dribbling) {
-            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam / 3));
+            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam / 3), ForceMode2D.Impulse);
         }
     }
 }
