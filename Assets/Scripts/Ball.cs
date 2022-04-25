@@ -5,7 +5,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour {
     // Timer to check hoop top and bottom collision order
     private float hoopTopTimer = -1f;
-
+    private bool reset = false;
     private float greenTime;
     private readonly float GREENTIME = 1f;
     private bool green = false;
@@ -16,27 +16,24 @@ public class Ball : MonoBehaviour {
     private SpriteRenderer ball_SpriteRenderer;
     private Rigidbody2D ball_Rigidbody2D;
     private PlayerController player_Script;
+    private Rigidbody2D player_Rigidbody2D;
     private Collider2D hand_Collider;
 
     private void Start() {
         ball_SpriteRenderer = GetComponent<SpriteRenderer>();
         ball_Rigidbody2D = GetComponent<Rigidbody2D>();
         player_Script = body.GetComponent<PlayerController>();
+        player_Rigidbody2D = body.GetComponent<Rigidbody2D>();
         hand_Collider = hand.GetComponent<Collider2D>();
     }
 
     void Update() {
         // Reset the ball position and clear velocity
         if (Input.GetKeyDown(KeyCode.R)) {
+            reset = true;
             player_Script.holding = false;
             player_Script.dribbling = false;
             hand_Collider.isTrigger = true;
-            // Resets the ball position and related vectors
-            // Also restores collision
-            Vector3 handPos = hand.transform.position;
-            ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
-            ball_Rigidbody2D.velocity = new Vector2(0, 0);
-            ball_Rigidbody2D.angularVelocity = 0f;
         }
 
         if (green) {
@@ -45,6 +42,10 @@ public class Ball : MonoBehaviour {
                 ball_SpriteRenderer.color = new Color(1, 1, 1, 1);
                 green = false;
             }
+        }
+        
+        if (player_Script.holding) {
+            transform.position = hand.transform.position;
         }
 
         // if dribbling, constrain ball x to hand x
@@ -56,6 +57,23 @@ public class Ball : MonoBehaviour {
             } else {
                 hand_Collider.isTrigger = false;
             }
+        }
+    }
+
+    public void FixedUpdate() {
+        if (reset) {
+            // resets the ball if r button was pressed
+            reset = false;
+            // Resets the ball position and related vectors
+            // Also restores collision
+            Vector3 handPos = hand.transform.position;
+            ball_Rigidbody2D.MovePosition(new Vector2(handPos.x, 5));
+            ball_Rigidbody2D.velocity = new Vector2(0, 0);
+            ball_Rigidbody2D.angularVelocity = 0f;
+        }
+
+        if (player_Script.holding) {
+            ball_Rigidbody2D.velocity = player_Rigidbody2D.velocity;
         }
     }
 

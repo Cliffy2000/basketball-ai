@@ -221,7 +221,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 577107646}
-  - component: {fileID: 577107647}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -244,21 +243,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &577107647
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 577107645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b64106d5276f43344bcd530bfdd1ed62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ballPrefab: {fileID: 6302735037685318507, guid: 0e21c9a029346f148bea4572a7ed6cea, type: 3}
-  ball: {fileID: 142686874}
-  player: {fileID: 1496036094}
 --- !u!1 &579948707
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,19 +593,19 @@ PrefabInstance:
       objectReference: {fileID: 142686874}
     - target: {fileID: 7753273711206385472, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
       propertyPath: runParam
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 7753273711206385472, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
-      propertyPath: jumpParam
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7753273711206385472, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: jumpParam
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753273711206385472, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
       propertyPath: shootParam
-      value: 10
+      value: 0.16
       objectReference: {fileID: 0}
     - target: {fileID: 7753273711206385472, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
       propertyPath: dribbleParam
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7753273711206385475, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
       propertyPath: m_RootOrder
