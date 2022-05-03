@@ -5,7 +5,7 @@ This is the repository for a genetic algorithm controlled AI player in a basketb
 
 The basketball game is built with Unity2D, and it incorporates a large proportion of basketball game rules into it to better simulate an environment for learning basketball.
 
-**@ [Cliff Yang](https://www.linkedin.com/in/yichen-yang-7583b9206/) & [Wayne Wang](https://www.linkedin.com/in/wayne-wang-49922a115/)**
+**@ [Cliff Yang](https://www.linkedin.com/in/yichen-yang-7583b9206/) & [Wayne Wang](https://waynewang.me/)**
 
 ## Game Patch Notes
 ### 0.3.2
