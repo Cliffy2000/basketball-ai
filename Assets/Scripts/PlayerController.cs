@@ -29,10 +29,10 @@ public class PlayerController : MonoBehaviour
     private bool shoot = false;
     public bool forceShoot = false;
     private bool layup = false;
-    public bool jump = false;      // waiting on jump action to go through
-    public bool grounded = false;  // shows if the player is on the ground
-    public bool stopped = false;   // shows if the player can dribble
-    public bool dribbling = false;  // indicator to show if the player is dribbling
+    public bool jump = false;
+    public bool grounded = false;
+    public bool stopped = false;
+    public bool dribbling = false;
 
     private float shootTime = 0f;
     private readonly float SHOOTTIME = 1.5f;
@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
+    // Input detection should be in Update()
     private void Update() {
         inputX = Input.GetAxisRaw("Horizontal");
         mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -65,52 +66,8 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new(scale.x * -1, scale.y, scale.z);
         }
 
-        if (Input.GetButtonDown("Jump") && grounded && !dribbling) {
-            // jump if on the ground and not dribbling
+        if (Input.GetButton("Jump")) {
             jump = true;
-        }
-
-        if (Mathf.Abs(player_Rigidbody2D.velocity.x) >= 0.01 && holding && !stopped && shootTime ==0f) {
-            holding = false;
-            dribbling = true;
-            ball_Rigidbody2D.AddForce(new(0, -dribbleParam));
-        }
-
-        // Checks mouse clicks
-        if (Input.GetMouseButtonDown(0) && (holding || dribbling)) {
-            shootTime = Time.time;
-            mouseButton0 = true;
-        }
-
-        if (Input.GetMouseButtonUp(0)) {
-            Debug.Log("Mouse up");
-            if (shootTime != 0) shootTime = Time.time - shootTime;
-            Debug.Log(shootTime); 
-            // check click time length
-            if (shootTime < SHOOTTIMEMIN && shootTime != 0) {
-                // click is switch from dribbling to stop and hold
-                dribbling = false;
-                holding = true;
-                stopped = true;
-                hand_Collider.isTrigger = true;
-                shootTime = 0f;
-            } else if (shootTime > SHOOTTIMEMIN) {
-                holding = false;
-                shoot = true;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.R)) {
-            // resets player properties
-            reset = true;
-            holding = false;
-            dribbling = false;
-            stopped = false;
-            shoot = false;
-            shootTime = 0;
-            forceShoot = false;
-            layup = false;
-            jump = false;
         }
     }
 
@@ -122,67 +79,18 @@ public class PlayerController : MonoBehaviour
         Vector2 shootDirection = new(difference.x, difference.y);
         shootDirection.Normalize();
 
-        if (shoot) {
-            holding = false;
-            stopped = false;
-            if (forceShoot) {
-                // TODO: change force parameter or set ball velocity
-                shootDirection = new Vector2(shootDirection.x * (1 + Random.Range(-forceShootError, forceShootError)),
-                    shootDirection.y * (1 + Random.Range(-forceShootError, forceShootError)));
-                shootDirection.Normalize();
-                shootTime = Random.Range(2 * SHOOTTIME, 3 * SHOOTTIME);
-            } else {
-                shootTime = Mathf.Min(shootTime, SHOOTTIME) + BASESHOOTTIME;
-            }
-            Vector2 shootForce = new(shootTime * shootParam * shootDirection.x, shootTime * shootParam * shootDirection.y);
-            ball_Rigidbody2D.AddForce(shootForce, ForceMode2D.Impulse);
-            shootTime = 0;
-            shoot = false;
-            forceShoot = false;
-        }
-
-        Vector2 jumpForce = new(0f, 0f);
-        if (jump && grounded) {
-            jump = false;
-            grounded = false;
-            jumpForce = new(jumpParam * inputX / 2, jumpParam);
-            // Jump actions
-            if (dribbling) {
-                holding = true;
-                dribbling = false;
-            } else if (holding) {
-                forceShoot = true;
-            }
-        }
-
-        if (!stopped && grounded) {
-            player_Rigidbody2D.velocity = new(runParam * inputX, player_Rigidbody2D.velocity.y);
-        } else if (stopped && grounded) {
-            player_Rigidbody2D.velocity = new(0, 0);
-        }
-        
-        player_Rigidbody2D.AddForce(jumpForce, ForceMode2D.Impulse);
-
-        if (reset) {
-            reset = false;
-            player_Rigidbody2D.velocity = new(0, 0);
-            player_Rigidbody2D.position = new(15, -5);
-        }
     }
 
 
     private void OnCollisionEnter2D(Collision2D collision) {
-        grounded = true;
-        if (shoot || layup || stopped) {
-            shoot = true;
-            forceShoot = true;
-        }
-        if (forceShoot == true) {
-            shoot = true;
+        if (collision.gameObject.CompareTag("Ground")) {
+            grounded = true;
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision) {
-
+        if (collision.gameObject.CompareTag("Ground")) {
+            grounded = false;
+        }
     }
 }

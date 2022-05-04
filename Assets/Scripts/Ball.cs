@@ -28,11 +28,7 @@ public class Ball : MonoBehaviour {
     }
 
     void Update() {
-        // Reset the ball position and clear velocity
-        if (Input.GetKeyDown(KeyCode.R)) {
-            reset = true;
-            hand_Collider.isTrigger = true;
-        }
+
 
         if (green) {
             // Resets ball color after enought time has passed
@@ -42,9 +38,6 @@ public class Ball : MonoBehaviour {
             }
         }
         
-        if (player_Script.holding) {
-            transform.position = hand.transform.position;
-        }
 
         // if dribbling, constrain ball x to hand x
         if (player_Script.dribbling) {
@@ -59,20 +52,7 @@ public class Ball : MonoBehaviour {
     }
 
     public void FixedUpdate() {
-        if (reset) {
-            // resets the ball if r button was pressed
-            reset = false;
-            // Resets the ball position and related vectors
-            // Also restores collision
-            Vector3 handPos = hand.transform.position;
-            ball_Rigidbody2D.position = new Vector2(10, 4);
-            ball_Rigidbody2D.velocity = new Vector2(0, 0);
-            ball_Rigidbody2D.angularVelocity = 0f;
-        }
 
-        if (player_Script.holding) {
-            ball_Rigidbody2D.velocity = player_Rigidbody2D.velocity;
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -86,31 +66,16 @@ public class Ball : MonoBehaviour {
             } else hoopTopTimer = -1f;
         }
 
-        if (collision.CompareTag("Hand")) {
-            // Catch the ball
-            if (!player_Script.dribbling) {
-                player_Script.holding = true;
-                hand_Collider.isTrigger = true;
-            }
-        }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
-        if (player_Script.dribbling && (transform.position.y < hand.transform.position.y)) {
-            hand_Collider.isTrigger = false; 
-        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
         // Activates only when the hand is not a trigger (dribbling)
         // Gives the ball downward dribbling force
-        if (collision.gameObject.CompareTag("Hand")  && player_Script.dribbling) {
-            float dribbleScale = 0.5f + Mathf.Abs(player_Script.rotZ + 90) / 60;
-            ball_Rigidbody2D.AddForce(new(0, -player_Script.dribbleParam*dribbleScale), ForceMode2D.Impulse);
-        }
 
-        if (collision.gameObject.CompareTag("Ground") && player_Script.dribbling) {
-            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam / 3), ForceMode2D.Impulse);
-        }
     }
 }
