@@ -79,7 +79,7 @@ public class Ball : MonoBehaviour {
 
         if (collision.CompareTag("Hand") && allowCatch) {
             player_Script.holding = true;
-            hand_Collider.isTrigger = false;
+            hand_Collider.isTrigger = true;
         }
     }
 
