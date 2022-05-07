@@ -128,6 +128,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6302735037685318507, guid: 0e21c9a029346f148bea4572a7ed6cea, type: 3}
   m_PrefabInstance: {fileID: 6302735037294809597}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &209728224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7753273711021272891, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+  m_PrefabInstance: {fileID: 7753273712242578562}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,6 +576,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 435802775, guid: 0e21c9a029346f148bea4572a7ed6cea, type: 3}
+      propertyPath: arm
+      value: 
+      objectReference: {fileID: 209728224}
+    - target: {fileID: 435802775, guid: 0e21c9a029346f148bea4572a7ed6cea, type: 3}
       propertyPath: body
       value: 
       objectReference: {fileID: 1496036094}
@@ -647,6 +656,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1628401199, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4099386
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401199, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.4099386
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401199, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.4099386
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401199, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.014
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401199, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.9777
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401200, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_Radius
+      value: 0.4169644
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401200, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.0015508713
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628401200, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.27232563
+      objectReference: {fileID: 0}
+    - target: {fileID: 7753273711206385468, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
+      propertyPath: m_Mass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7753273711206385468, guid: 423acd6ced1b72449b816720e85bb17b, type: 3}
       propertyPath: m_Material
       value: 
