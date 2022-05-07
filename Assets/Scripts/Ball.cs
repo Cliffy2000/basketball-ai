@@ -57,12 +57,14 @@ public class Ball : MonoBehaviour {
                 hand_Collider.isTrigger = false;
             }
         }
+
     }
 
     public void FixedUpdate() {
         if (player_Script.holding) {
             ball_Rigidbody2D.MovePosition(hand.transform.position);
             ball_Rigidbody2D.velocity = player_Rigidbody2D.velocity;
+            ball_Rigidbody2D.angularVelocity = 0; // change to rotate with arm
         }
     }
 
@@ -92,14 +94,18 @@ public class Ball : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision) {
         // Activates only when the hand is not a trigger (dribbling)
         // Gives the ball downward dribbling force
-        if (collision.gameObject.CompareTag("Hand") && player_Script.dribbling) {
-            Debug.Log("hand collision");
-            float dribbleScale = 0.5f + Mathf.Abs(player_Script.rotZ + 90) / 60;
+
+        float rotZ = 0;
+        if (player_Script.rotZ > 0) {
+            if (rotZ > 90) rotZ = -179f;
+            else rotZ = -1f;
+        }
+        float dribbleScale = (0.5f + Mathf.Abs(rotZ + 90) / 60) / 4f;
+        if (collision.collider.gameObject.CompareTag("Hand") && player_Script.dribbling) {
             ball_Rigidbody2D.AddForce(new(0, -player_Script.dribbleParam * dribbleScale), ForceMode2D.Impulse);
         }
         if (collision.gameObject.CompareTag("Ground") && player_Script.dribbling) {
-            Debug.Log("ground collision");
-            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam / 3), ForceMode2D.Impulse);
+            ball_Rigidbody2D.AddForce(new(0, player_Script.dribbleParam * dribbleScale / 3), ForceMode2D.Impulse);
         }
     }
 }

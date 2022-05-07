@@ -9,6 +9,7 @@ TagManager:
   - Hand
   - Arm
   - Ground
+  - HandTag
   layers:
   - Default
   - TransparentFX

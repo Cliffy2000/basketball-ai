@@ -24,8 +24,8 @@ public class PlayerArmControl : MonoBehaviour {
         if (player_Script.dribbling) {
             // rotz is between 0 and -180 if the arm is lower half
             if (rotZ > 0) {
-                if (rotZ > 90) rotZ = 179.99f;
-                else rotZ = 0.01f;
+                if (rotZ > 90) rotZ = -179f;
+                else rotZ = -1f;
             }
         }
 
