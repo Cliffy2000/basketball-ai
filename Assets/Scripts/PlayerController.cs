@@ -168,13 +168,16 @@ public class PlayerController : MonoBehaviour {
 			forceShoot = true;
         }
 
-
 		if (inputX != 0 && holding && !stopped && !shoot && grounded && !Input.GetMouseButton(0)) {
 			// start dribbling
 			dribbling = true;
 			holding = false;
 			ball_Rigidbody2D.AddForce(new Vector2(0, -dribbleParam*2), ForceMode2D.Impulse);
         }
+
+		player_Animator.SetFloat("Speed", Mathf.Abs(player_Rigidbody2D.velocity.x));
+		player_Animator.SetBool("Jump", !grounded);
+		player_Animator.SetBool("FaceForward", faceRight == (player_Rigidbody2D.velocity.x > 0));
 	}
 	 
 
@@ -234,8 +237,11 @@ public class PlayerController : MonoBehaviour {
             } else if (forceShoot) {
 				shootTime = maxShootTime;
             }
+			
 			Vector2 shootForce = shootTime * shootParam * shootDirection;
-
+			if (layup) {
+				shootForce *= 1.5f;
+            }
 			ball_Rigidbody2D.AddForce(shootForce, ForceMode2D.Impulse);
 			if (forceShoot) {
 				// add shooting error here
