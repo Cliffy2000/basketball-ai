@@ -96,45 +96,6 @@ public class PlayerController : MonoBehaviour {
             }
 		}
 
-		{
-			/*
-			if (Input.GetMouseButton(0)) {
-				shootTime = Time.time - shootStart;
-				if (dribbling && shootTime >= minShootTime) {
-					layup = true;
-					holding = true;
-					dribbling = false;
-				}
-			}
-
-			if (Input.GetMouseButtonUp(0)) {
-				// switch to stop and hold
-				shootTime = Time.time - shootStart;
-				if (shootTime <= minShootTime && (holding || dribbling)) {
-					holding = true;
-					stopped = true;
-					dribbling = false;
-				}
-			}
-
-			if (allowShoot) {
-				if ((Input.GetMouseButtonUp(0) && shootTime > minShootTime) || (layup && shootTime >= maxLayupTime) || shootTime >= maxShootTime) {
-					shoot = true;
-					if (!(Input.GetMouseButtonUp(0) && shootTime > minShootTime)) {
-						forceShoot = true;
-					}
-				}
-			}
-
-			if (holding) {
-				hand_Collider.isTrigger = true;
-			}
-			if (Input.GetMouseButtonUp(0)) {
-				allowShoot = true;
-			}
-			*/
-		}
-
 		if (Input.GetMouseButtonUp(0)) {
 			// Mouse release can lead to fast click -> stop and hold, short hold -> layup or shoot, 
 			// and long hold -> held too long and force shoot
@@ -150,8 +111,6 @@ public class PlayerController : MonoBehaviour {
 					hand_Collider.isTrigger = true;
                 } else if (holding) {
 					// shoot the ball with less than max force if the ball is held
-					Debug.Log("trigger shoot");
-					Debug.Log(shootTime);
 					shoot = true;
                 }
             } else {
@@ -178,6 +137,7 @@ public class PlayerController : MonoBehaviour {
 		player_Animator.SetFloat("Speed", Mathf.Abs(player_Rigidbody2D.velocity.x));
 		player_Animator.SetBool("Jump", !grounded);
 		player_Animator.SetBool("FaceForward", faceRight == (player_Rigidbody2D.velocity.x > 0));
+		player_Animator.SetBool("Layup", layup);
 	}
 	 
 
@@ -211,25 +171,6 @@ public class PlayerController : MonoBehaviour {
 				player_Rigidbody2D.velocity = new Vector2(vX, player_Rigidbody2D.velocity.y);
             }
 		}
-        {
-			/*
-			if (holding & shoot) {
-				if (shootTime > 1.5f) {
-					Debug.Log("shoot force error");
-				}
-				if (forceShoot && Input.GetMouseButton(0)) {
-					allowShoot = false;
-				}
-				shoot = false;
-				holding = false;
-				shoot = false;
-				stopped = false;
-				Vector2 shootForce = shootTime * shootParam * shootDirection;
-				ball_Rigidbody2D.AddForce(shootForce, ForceMode2D.Impulse);
-				shootTime = -1f;
-			}
-			 */
-		}
 
 		if (shoot && holding) { // should be able to delete holding from statement
 			if (forceShoot && layup) {
@@ -240,7 +181,7 @@ public class PlayerController : MonoBehaviour {
 			
 			Vector2 shootForce = shootTime * shootParam * shootDirection;
 			if (layup) {
-				shootForce *= 1.5f;
+				shootForce *= 1.25f;
             }
 			ball_Rigidbody2D.AddForce(shootForce, ForceMode2D.Impulse);
 			if (forceShoot) {
