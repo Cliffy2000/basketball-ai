@@ -25,8 +25,8 @@ public class PlayerController : MonoBehaviour {
 	public bool dribbling = false;
 	public bool stopped = false;
 	public bool holding = false;
-	private bool shoot = false;
-	private bool layup = false;
+	public bool shoot = false;
+	public bool layup = false;
 	private bool forceShoot = false;
 	private bool pendingShoot = false; // used to check if the player must shoot after landing on the ground with ball
 
@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour {
 
 
 	private void Start() {
+		Application.targetFrameRate = 40;
+
 		player_Rigidbody2D = GetComponent<Rigidbody2D>();
 		player_Animator = GetComponent<Animator>();
 		ball_Rigidbody2D = ball.GetComponent<Rigidbody2D>();
@@ -131,6 +133,8 @@ public class PlayerController : MonoBehaviour {
 			// start dribbling
 			dribbling = true;
 			holding = false;
+			hand_Collider.isTrigger = true;
+			Debug.Log("start dribble");
 			ball_Rigidbody2D.AddForce(new Vector2(0, -dribbleParam*2), ForceMode2D.Impulse);
         }
 
@@ -166,7 +170,7 @@ public class PlayerController : MonoBehaviour {
 				if (stopped) {
 					vX = 0f;
                 } else if (layup) {
-					vX *= 1.4f;
+					vX *= 1.2f;
                 }
 				player_Rigidbody2D.velocity = new Vector2(vX, player_Rigidbody2D.velocity.y);
             }
@@ -206,6 +210,9 @@ public class PlayerController : MonoBehaviour {
 				shoot = true;
 				forceShoot = true;
 				pendingShoot = false;
+            }
+			if (dribbling && hand_Collider.isTrigger) {
+				hand_Collider.isTrigger = false;
             }
 		}
 	}

@@ -227,7 +227,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDrag: 0.5
   m_AngularDrag: 0.05
   m_GravityScale: 3
@@ -248,12 +248,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e89d85d72affe47a2eeb79faec91ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 0}
+  hand: {fileID: 8105438104149103895}
   ball: {fileID: 0}
   dribbleParam: 0.1
   dribbling: 0
   stopped: 0
   holding: 0
+  shoot: 0
+  layup: 0
   rotZ: 0
 --- !u!95 &1496036095
 Animator:
@@ -284,7 +286,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2322161525312000683, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_Radius
-      value: 0.24738422
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2322161525312000683, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_Offset.x
@@ -292,7 +294,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2322161525312000683, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_Offset.y
-      value: 0
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2322161525312000683, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3697211994055207063, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_RootOrder
@@ -304,7 +310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3697211994055207063, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.834
+      value: -0.963
       objectReference: {fileID: 0}
     - target: {fileID: 3697211994055207063, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
       propertyPath: m_LocalPosition.z
@@ -342,10 +348,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player_Hand
       objectReference: {fileID: 0}
+    - target: {fileID: 5012887421336989987, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
 --- !u!4 &478003018404514979 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3697211994055207063, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
+  m_PrefabInstance: {fileID: 3885787953173734452}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8105438104149103895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5012887421336989987, guid: 47fe5066166a8d84d8c6b88e47325663, type: 3}
   m_PrefabInstance: {fileID: 3885787953173734452}
   m_PrefabAsset: {fileID: 0}
