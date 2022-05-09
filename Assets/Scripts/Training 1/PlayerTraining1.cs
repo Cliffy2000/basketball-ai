@@ -11,44 +11,27 @@ public class PlayerTraining1 : MonoBehaviour
     private Rigidbody2D ball_rigidbody2D;
     private Rigidbody2D player_rigidbody2D;
 
-    private bool reset = false;
     public bool holding = true;
     private bool allowShoot = false;
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
         player_rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
-    public void setBall(GameObject ball)
-    {
+    public void setBall(GameObject ball) {
         this.ball = ball;
         ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R)) {
-            reset = true;
-        }
+    void Update() {
         if (holding) {
             ball_rigidbody2D.transform.position = hand.transform.position;
         }
     }
 
     private void FixedUpdate() {
-        if (reset) {
-            shootDirection = Random.Range(0, 360);
-            shootForce = Random.Range(0.2f, 0.4f);
-            reset = false;
-            holding = true;
-            allowShoot = false;
-            player_rigidbody2D.MovePosition(new(transform.position.x, transform.position.y + 5));
-            ball_rigidbody2D.velocity = new Vector2(0, 0);
-            ball_rigidbody2D.angularVelocity = 0;
-        }
         if (allowShoot) {
             holding = false;
             allowShoot = false;
@@ -63,7 +46,13 @@ public class PlayerTraining1 : MonoBehaviour
         }
     }
 
-    public void tryShoot(Rigidbody2D b) {
-        
+    public void reset(Rigidbody2D b) {
+        shootDirection = Random.Range(0, 360);
+        shootForce = Random.Range(0.2f, 0.4f);
+        holding = true;
+        allowShoot = false;
+        player_rigidbody2D.MovePosition(new(transform.position.x, transform.position.y + 5));
+        ball_rigidbody2D.velocity = new Vector2(0, 0);
+        ball_rigidbody2D.angularVelocity = 0;
     }
 }
