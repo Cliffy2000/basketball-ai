@@ -1,6 +1,11 @@
 #import time
 import random
 
+top_percent = 0.2
+top_comb_percent = 0.6
+bottom_comb_percent = 0.05
+
+
 def calculateNextGen():
     result = []
     data = []
@@ -12,8 +17,8 @@ def calculateNextGen():
             
     
     data.sort(key=lambda x: x[-1])
-    good = data[:int(len(data)*0.3)]
-    bad = data[int(len(data)*0.3):]
+    good = data[:int(len(data)*top_percent)]
+    bad = data[int(len(data)*top_percent):]
 
     # top
     top = [g[0:2] for g in good]
@@ -21,7 +26,7 @@ def calculateNextGen():
 
     # top combination
     top_comb = []
-    for i in range(0, int(populationSize*0.4)):
+    for i in range(0, int(populationSize*top_comb_percent)):
         couple = random.sample(top, 2)
         direction = (couple[0][0] + couple[1][0]) / 2
         force = (couple[0][1] + couple[1][1]) / 2
@@ -30,7 +35,7 @@ def calculateNextGen():
 
     # bottom combination
     bottom_comb = []
-    for i in range(0, int(populationSize*0.05)):
+    for i in range(0, int(populationSize*bottom_comb_percent)):
         couple = random.sample(bad, 2)
         direction = (couple[0][0] + couple[1][0]) / 2
         force = (couple[0][1] + couple[1][1]) / 2
