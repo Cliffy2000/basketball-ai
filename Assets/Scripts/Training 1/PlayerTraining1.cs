@@ -21,6 +21,12 @@ public class PlayerTraining1 : MonoBehaviour
         player_rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
+    public void setBall(GameObject ball)
+    {
+        this.ball = ball;
+        ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -43,6 +49,12 @@ public class PlayerTraining1 : MonoBehaviour
             ball_rigidbody2D.velocity = new Vector2(0, 0);
             ball_rigidbody2D.angularVelocity = 0;
         }
+        if (allowShoot) {
+            holding = false;
+            allowShoot = false;
+            Vector2 shoot = shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
+            ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
@@ -52,11 +64,6 @@ public class PlayerTraining1 : MonoBehaviour
     }
 
     public void tryShoot(Rigidbody2D b) {
-        if (allowShoot) {
-            holding = false;
-            allowShoot = false;
-            Vector2 shoot = shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
-            b.AddForce(shoot, ForceMode2D.Impulse);
-        }
+        
     }
 }
