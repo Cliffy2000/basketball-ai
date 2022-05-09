@@ -358,6 +358,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 560519688290798990, guid: 4f4bcae8be503ad44a8de6005f3d1c82, type: 3}
+      propertyPath: ball
+      value: 
+      objectReference: {fileID: 7042312845705999657}
     - target: {fileID: 1900430195039138469, guid: 4f4bcae8be503ad44a8de6005f3d1c82, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -368,7 +372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1900430195039138469, guid: 4f4bcae8be503ad44a8de6005f3d1c82, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -8.77
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1900430195039138469, guid: 4f4bcae8be503ad44a8de6005f3d1c82, type: 3}
       propertyPath: m_LocalPosition.z
@@ -465,3 +469,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d2b962d32019bf4b83bfde17b612402, type: 3}
+--- !u!1 &7042312845705999657 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7700938442996108984, guid: 9d2b962d32019bf4b83bfde17b612402, type: 3}
+  m_PrefabInstance: {fileID: 820895994514717585}
+  m_PrefabAsset: {fileID: 0}

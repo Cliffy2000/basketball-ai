@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6687153123586187421}
   - component: {fileID: 6745613612981533560}
+  - component: {fileID: 560519688290798992}
   m_Layer: 9
   m_Name: Player_Arm
   m_TagString: Untagged
@@ -85,6 +86,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &560519688290798992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952304079001274307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60f271decee5a1846a9f33a7276dd0ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 3452811754628951610}
 --- !u!1 &3452811754628951610
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,8 +112,9 @@ GameObject:
   - component: {fileID: 4181328074374245509}
   - component: {fileID: 2549923326195722908}
   - component: {fileID: 5519238539505602279}
+  - component: {fileID: 560519688290798990}
   m_Layer: 8
-  m_Name: Player
+  m_Name: Player Training 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -240,6 +255,23 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &560519688290798990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452811754628951610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af6f88b20b003042b12c1115eabc038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shootForce: 0
+  shootDirection: 135
+  ball: {fileID: 0}
+  hand: {fileID: 7593646449118524367}
+  holding: 1
 --- !u!1 &7593646449118524367
 GameObject:
   m_ObjectHideFlags: 0
