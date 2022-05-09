@@ -269,7 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootForce: 0
   shootDirection: 135
-  ball: {fileID: 0}
+  ball: {fileID: 7700938442996108984, guid: 9d2b962d32019bf4b83bfde17b612402, type: 3}
   hand: {fileID: 7593646449118524367}
   holding: 1
 --- !u!1 &7593646449118524367

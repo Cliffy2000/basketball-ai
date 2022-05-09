@@ -36,6 +36,7 @@ public class PlayerTraining1 : MonoBehaviour
             holding = false;
             allowShoot = false;
             Vector2 shoot = shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
+            ball_rigidbody2D.velocity = new(0, 0);
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
         }
     }

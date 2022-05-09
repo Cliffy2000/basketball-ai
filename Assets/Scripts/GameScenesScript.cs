@@ -8,13 +8,13 @@ public class GameScenesScript : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 3f;
-    private float populationSize = 50;
-    private Gene[] genes = new Gene[50];
+    private int populationSize = 50;
+    private Gene[] genes;
 
     public GameObject player;
     public GameObject ball;
-    private GameObject[] players = new GameObject[50];
-    private GameObject[] balls = new GameObject[50];
+    private GameObject[] players;
+    private GameObject[] balls;
 
     string output_path = @"Assets/data.txt";
     string input_path = @"Assets/nextGen.txt";
@@ -24,6 +24,10 @@ public class GameScenesScript : MonoBehaviour
 
     private void Start()
     {
+        genes = new Gene[populationSize];
+        players = new GameObject[populationSize];
+        balls = new GameObject[populationSize];
+
         for (var i = 0; i < populationSize; i++)
         {
             genes[i] = new Gene();
@@ -52,7 +56,7 @@ public class GameScenesScript : MonoBehaviour
                 genes[i].score = balls[i].GetComponent<BallTraining1>().score;
             }
 
-            string[] geneText = new string[50];
+            string[] geneText = new string[populationSize];
             for (var i = 0; i < populationSize; i++)
             {
                 geneText[i] = genes[i].ToString();
@@ -76,7 +80,6 @@ public class GameScenesScript : MonoBehaviour
             }
 
             var lines = File.ReadAllLines(input_path);
-            Debug.Log(lines[0]);
             for (var i = 0; i < populationSize; i++)
             {
                 genes[i] = new Gene(float.Parse(lines[i].Split(' ')[0]), float.Parse(lines[i].Split(' ')[1]));
