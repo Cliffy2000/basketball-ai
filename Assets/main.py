@@ -16,7 +16,7 @@ def calculateNextGen():
     populationSize = len(data)
             
     
-    data.sort(key=lambda x: x[-1])
+    data.sort(key=lambda x: x[-1], reverse=True)
     good = data[:int(len(data)*top_percent)]
     bad = data[int(len(data)*top_percent):]
 
