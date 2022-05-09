@@ -8,8 +8,10 @@ public class GameScenesScript : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 3f;
-    private int populationSize = 50;
+    private int populationSize = 60;
+    private int timeScale = 4;
     private Gene[] genes;
+    private int generation = 0;
 
     public GameObject player;
     public GameObject ball;
@@ -24,6 +26,7 @@ public class GameScenesScript : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = timeScale;
         genes = new Gene[populationSize];
         players = new GameObject[populationSize];
         balls = new GameObject[populationSize];
@@ -51,10 +54,15 @@ public class GameScenesScript : MonoBehaviour
         if (Time.time - genStartTime > genTime && !isRunning)
         {
             isRunning = true;
+            generation += 1;
+            float totalScore = 0f;
             for (var i = 0; i < populationSize; i++)
             {
                 genes[i].score = balls[i].GetComponent<BallTraining1>().score;
+                totalScore += genes[i].score;
             }
+
+            Debug.Log("Generation: " + generation + " Score: " + totalScore);
 
             string[] geneText = new string[populationSize];
             for (var i = 0; i < populationSize; i++)
@@ -120,7 +128,7 @@ public class Gene
 
     public override string ToString()
     {
-        return g1 + " " + g2 + " " + score;
+        return "[" + g1 + "," + g2 + "," + score + "]";
     }
 }
 
