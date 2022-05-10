@@ -519,7 +519,7 @@ GameObject:
   - component: {fileID: 2060384879}
   - component: {fileID: 2060384878}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -534,11 +534,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2060384877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ae5bc12540d34c71b29f67bc447510c, type: 3}
+  m_Script: {fileID: 11500000, guid: aece526ef8f4c4d4384d35f4fc9ee58a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  ball: {fileID: 0}
+  player: {fileID: 3452811754628951610, guid: 4f4bcae8be503ad44a8de6005f3d1c82, type: 3}
+  ball: {fileID: 7700938442996108984, guid: 9d2b962d32019bf4b83bfde17b612402, type: 3}
 --- !u!4 &2060384879
 Transform:
   m_ObjectHideFlags: 0

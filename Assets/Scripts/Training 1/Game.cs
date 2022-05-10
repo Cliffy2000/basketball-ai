@@ -4,7 +4,7 @@ using UnityEditor.Scripting.Python;
 using UnityEditor;
 
 
-public class GameScenesScript : MonoBehaviour
+public class Game : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 3f;
@@ -18,8 +18,8 @@ public class GameScenesScript : MonoBehaviour
     private GameObject[] players;
     private GameObject[] balls;
 
-    string output_path = @"Assets/data.txt";
-    string input_path = @"Assets/nextGen.txt";
+    string output_path = @"Data/result.txt";
+    string input_path = @"Data/nextGen.txt";
 
 
     private bool isRunning = false;
@@ -74,7 +74,7 @@ public class GameScenesScript : MonoBehaviour
 
             Debug.Log("Python started");
 
-            string scriptPath = Path.Combine(Application.dataPath, "main.py");
+            string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
             PythonRunner.RunFile(scriptPath);
 
             Debug.Log("Python finished");
