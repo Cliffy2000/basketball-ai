@@ -20,50 +20,6 @@ resultPath = '../../../Data/result.txt'
 nextGenPath = '../../../Data/nextGen.txt'
 
 
-def readData():
-    data = []
-    with open(resultPath, 'r') as f:
-        for line in f:
-            data.append(eval(line))
-        f.close()
-    popSize = len(data)
-    return data
-
-
-def createNewGen(data):
-    # split the data into two parts
-    data.sort(key=lambda x: x[-1], reverse=True)
-    splitIndex = int(topPercent*len(data))
-    top, bottom = data[:splitIndex], data[splitIndex:]
-
-    newGen = []
-    newGen += [gene[:geneSize] for gene in top]
-
-    # allows the mutation proportion to change according to the performance in a simple manner
-    # potential change to more complex changing curve
-    scores = [gene[-1] for gene in data]
-    totalScorePercent = sum(scores) / (popSize * maxScore)
-    mutatePercent = min(1 - totalScorePercent, maxMutatePercent)
-    mutateCount = int(mutatePercent * popSize)
-
-    for i in range(mutateCount):
-        newGen.append([random.randint(0, 360), 0.2 + random.random() * 0.6])
-    
-    for i in range(popSize - mutateCount - splitIndex):
-        # crosses the genes by selecting with the score as probabilities
-        x1, x2 = random.choices(data, k = 2, weights = scores)
-        newGen.append([(x1[0] + x2[0])/2, (x1[1] + x2[1])/2])
-    
-    return newGen
-
-
-def writeData(newGenText):
-    with (open(nextGenPath, "a+")) as f:
-        for gene in newGenText:
-            f.write(gene + '\n')
-        f.close()
-
-
 def randomGene():
     # Creates a random gene according to netShape
     gene = []

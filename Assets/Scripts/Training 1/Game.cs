@@ -109,16 +109,7 @@ public class Gene
 {
     public float g1;
     public float g2;
-    public float score;
     int generation;
-
-    public Gene()
-    {
-        g1 = Random.Range(0, 360);
-        g2 = Random.Range(0.2f, 0.4f);
-        score = 0f;
-        generation = 1;
-    }
 
     public Gene(float g1, float g2)
     {
@@ -129,6 +120,34 @@ public class Gene
     public override string ToString()
     {
         return "[" + g1 + "," + g2 + "," + score + "]";
+    }
+
+    int[] geneShape;
+    int[][] netShape;
+    float score;
+    float maxScore;
+    float[][][] genes;
+    float[] geneFlat;
+
+
+    public Gene(int[] geneShape) {
+        this.geneShape = geneShape;
+        netShape = new int[geneShape.Length - 1][];
+        for (var i = 0; i < geneShape.Length-1; i++) {
+            netShape[i] = new int[] { this.geneShape[i], this.geneShape[i + 1] };
+        }
+        this.maxScore = 100;
+    }
+
+    public void convertWeights(string input) {
+        
+    }
+
+    public void passThrough(float[] gameState) {
+        float[] actions;
+        foreach (var layerSize in netShape) {
+
+        }
     }
 }
 
