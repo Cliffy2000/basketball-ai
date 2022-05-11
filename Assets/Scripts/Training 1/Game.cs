@@ -12,6 +12,8 @@ public class Game : MonoBehaviour
     private int timeScale = 4;
     private Gene[] genes;
     private int generation = 0;
+    private int[] geneShape = new int[] {1,3,2};
+    private int[] newShape;
 
     public GameObject player;
     public GameObject ball;
@@ -109,28 +111,25 @@ public class Gene
 {
     int generation;
     int[] geneShape;
-    int[][] netShape;
     public float score;
-    float maxScore;
-    float[] gene;
+    float[] gene; // an array of all the weights
 
 
-    public Gene(int[] geneShape, int[][] netShape) {
+    public Gene(int[] geneShape, int generation) {
         // Create the gene and calculate the network shape
         this.geneShape = geneShape;
-        this.netShape = netShape;
+        this.generation = generation;
         // Move this outside of gene creation
         /*
         for (var i = 0; i < geneShape.Length-1; i++) {
             netShape[i] = new int[] { this.geneShape[i], this.geneShape[i + 1] };
         }
         */
-        this.maxScore = 100;
     }
 
-    public void convertWeights(string input) {
+    public void convertWeights(string fileText) {
         // Stores the input text string as an 1D array of floats inside the gene
-        string[] geneText = input.Split(' ');
+        string[] geneText = fileText.Split(' ');
         gene = new float[geneText.Length];
 
         for (var i=0; i<geneText.Length; i++) {

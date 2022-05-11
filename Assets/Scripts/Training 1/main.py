@@ -1,6 +1,6 @@
 import random
 from unittest import result
-import copy
+import os
 
 topPercent = 0.3
 maxMutatePercent = 0.4
@@ -21,14 +21,13 @@ nextGenPath = '../../../Data/nextGen.txt'
 
 
 def randomGene():
-    # Creates a random gene according to netShape
-    gene = []
-    for dimFront,dimBack in netShape:
-        gene.append([[random.random() for b in range(dimBack)] for f in range(dimFront)])
+    # creates a gene with random edge weights as a 1d list
+    gene = [random.random() for i in range(sum([m*n for m,n in netShape]))]
     return gene
 
 
 def initializePopulation():
+    # returns a list of genes as a 2d list
     population = []
     for g in range(popSize):
         population.append(randomGene())
@@ -38,10 +37,7 @@ def initializePopulation():
 def writePopulation(population, path=nextGenPath, score=''):
     with open(path, "w+") as f:
         for gene in population:
-            geneText = ''
-            for layer in gene:
-                for node in layer:
-                    geneText += ' '.join([format(item, '.3f') for item in node]) + ' '
+            geneText = ' '.join([format(weight, '.3f') for weight in gene])
             f.write(geneText + score + '\n')
     f.close()
 
@@ -51,12 +47,10 @@ def readPopulation(path=resultPath):
     with open(path, 'r') as f:
         result = f.readlines()
         for line in result:
-            line = line.split()
-            score = line.pop(-1)
-            gene = []
-            for dimFront, dimBack in netShape:
-                gene.append([[float(line.pop(0)) for b in range(dimBack)] for f in range(dimFront)])
+            gene = line.split()
+            score = gene.pop(-1)
             population.append([gene, score])
+    f.close()
     return population
 
 
@@ -64,7 +58,7 @@ def createNextGen(population):
     # must take in processed population from readPopulation()
     population.sort(key=lambda x:x[-1], reverse=True)
     scores = [max(float(g[-1]), minScore) for g in population]
-    genes = [g[0] for g in population]
+    genes = [[float(g) for g in gene[0]] for gene in population]
     newPopulation = []
 
     newPopulation += genes[:int(popSize*topPercent)]
@@ -75,18 +69,8 @@ def createNextGen(population):
     
     crossCount = popSize - len(newPopulation)
     for i in range(crossCount):
-        parent1, parent2 = random.choices(genes, k=2, weights=scores)
-        child = copy.deepcopy(parent1)
-        
-        for i in range(len(parent1)):
-            # parent1[i] is a layer
-            for j in range(len(parent1[i])):
-                # parent1[i][j] is the list of edges originating from the j'th node on the i'th layer
-                for k in range(len(parent1[i][j])):
-                    # parent[i][j][k] is the weight(number) of the k'th edge originating from the j'th node on the i'th layer
-                    child[i][j][k] = (parent1[i][j][k] + parent2[i][j][k]) / 2
-        
-        newPopulation.append(child)
+        parent1, parent2 = random.choices(genes, k=2, weights=scores)        
+        newPopulation.append([(m+n)/2 for m,n in zip(parent1, parent2)])
 
     return newPopulation        
 
@@ -98,7 +82,7 @@ newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
 initial = initializePopulation()
-writePopulation(initial, nextGenPath, score="50")
+writePopulation(initial, nextGenPath, score=" 50")
 p = readPopulation(nextGenPath)
 p1 = createNextGen(p)
 writePopulation(p1, path="../../../Data/testfile.txt")
