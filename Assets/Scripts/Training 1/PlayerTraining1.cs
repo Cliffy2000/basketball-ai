@@ -37,7 +37,7 @@ public class PlayerTraining1 : MonoBehaviour
         if (allowShoot) {
             holding = false;
             allowShoot = false;
-            float[] posXNode = new float[] { (player_rigidbody2D.position.x + 10) / 30 } ;
+            float[] posXNode = new float[] { (player_rigidbody2D.position.x - 10) / 5 } ;
             float[] actions = gene.feedForward(posXNode);
 
             armDirection = actions[1] * 360;

@@ -3,17 +3,19 @@ using System.IO;
 using UnityEditor.Scripting.Python;
 using UnityEditor;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 4.5f;
-    private int populationSize = 60;
-    private int timeScale = 20;
+    private int populationSize = 75;
+    private int timeScale = 1;
     private Gene[] genes;
     private int generation = 1;
     private int[] geneShape = new int[] {1,3,2};
     private int[] newShape;
+    private float topScore = 0;
 
     public GameObject player;
     public GameObject ball;
@@ -23,12 +25,20 @@ public class Game : MonoBehaviour
     string starting_path = @"Data/starting.txt";
     string output_path = @"Data/result.txt";
     string input_path = @"Data/nextGen.txt";
+    string bestGen_path = @"Data/best.txt";
+    string score_path = @"Data/scores.txt";
 
 
     private bool isRunning = false;
 
     private void Start()
     {
+        /*
+        Scene newScene = SceneManager.CreateScene("Empty");
+        Debug.Log(SceneManager.GetSceneByName("Empty"));
+        SceneManager.LoadScene("Empty", LoadSceneMode.Additive);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Empty"));
+        */
         Time.timeScale = timeScale;
         genes = new Gene[populationSize];
         players = new GameObject[populationSize];
@@ -46,7 +56,7 @@ public class Game : MonoBehaviour
         for (var i = 0; i < populationSize; i++)
         {
             // spawn player between -10 and 10
-            players[i] = Instantiate(player, new Vector3(10, 0, 0), Quaternion.identity);
+            players[i] = Instantiate(player, new Vector3(Random.Range(10, 15), 0, 0), Quaternion.identity);
             players[i].GetComponent<PlayerTraining1>().gene = genes[i];
             balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
             players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
@@ -60,7 +70,6 @@ public class Game : MonoBehaviour
         if (Time.time - genStartTime > genTime && !isRunning)
         {
             isRunning = true;
-            generation += 1;
             float totalScore = 0f;
             for (var i = 0; i < populationSize; i++)
             {
@@ -68,13 +77,7 @@ public class Game : MonoBehaviour
                 totalScore += genes[i].score;
             }
 
-            if (totalScore > 3000) {
-                Time.timeScale = 1;
-            }
-
-            if (generation % 5 == 0 || Time.timeScale == 1) {
-                Debug.Log("Generation: " + generation + " Score: " + totalScore);
-            }
+            Debug.Log("Generation: " + generation + " Score: " + totalScore);
 
             string[] geneText = new string[populationSize];
             for (var i = 0; i < populationSize; i++)
@@ -82,7 +85,14 @@ public class Game : MonoBehaviour
                 geneText[i] = genes[i].ToString();
             }
             File.WriteAllLines(output_path, geneText);
-
+            string t = "Generation: " + generation + " Score: " + totalScore + "\n";
+            File.AppendAllText(score_path, t);
+            if (totalScore > topScore) {
+                File.WriteAllText(bestGen_path, t);
+                File.AppendAllLines(bestGen_path, geneText);
+                topScore = totalScore;
+            }
+            generation += 1;
             string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
             PythonRunner.RunFile(scriptPath);
 
@@ -99,7 +109,7 @@ public class Game : MonoBehaviour
                 genes[i] = new Gene(geneShape, generation);
                 genes[i].fromText(lines[i]);
 
-                players[i] = Instantiate(player, new Vector3(10, 0, 0), Quaternion.identity);
+                players[i] = Instantiate(player, new Vector3(Random.Range(10, 15), 0, 0), Quaternion.identity);
                 players[i].GetComponent<PlayerTraining1>().gene = genes[i];
                 balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
                 players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);

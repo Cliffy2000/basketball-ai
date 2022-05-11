@@ -2,10 +2,10 @@ import random
 from unittest import result
 import os
 
-topPercent = 0
+topPercent = 0.25
 maxMutatePercent = 0.4
 # The size of each population
-popSize = 60
+popSize = 75
 geneSize = 2
 # maximum and minimum score of a gene, used also to calculate performance
 minScore = 1
@@ -61,14 +61,8 @@ def createNextGen(population):
     genes = [[float(g) for g in gene[0]] for gene in population]
     newPopulation = []
 
-    if (scores[0] > 70):
-        for i in range(popSize):
-            newPopulation.append(genes[0])
-        return newPopulation
-
     newPopulation += genes[:int(popSize*topPercent)]
     mutationRate = (1 - sum(scores)/(maxScore*popSize)) * maxMutatePercent
-    mutationRate = 1
 
     for i in range(int(popSize * mutationRate)):
         newPopulation.append(randomGene())
@@ -87,6 +81,7 @@ newGen = createNewGen(data)
 newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
+
 
 data = readPopulation()
 newGeneration = createNextGen(data)

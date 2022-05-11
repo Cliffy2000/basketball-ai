@@ -212,8 +212,16 @@ PrefabInstance:
       value: Rack
       objectReference: {fileID: 0}
     - target: {fileID: 808387335807788430, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
+      propertyPath: m_Name
+      value: Hoop_Back
+      objectReference: {fileID: 0}
+    - target: {fileID: 808387335807788430, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_TagString
       value: Hoop
+      objectReference: {fileID: 0}
+    - target: {fileID: 808387336842495404, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
+      propertyPath: m_Name
+      value: Hoop_Front
       objectReference: {fileID: 0}
     - target: {fileID: 808387336842495404, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_TagString
@@ -286,6 +294,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3847891154089607265, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3847891154089607268, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -328,6 +340,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3847891154089607268, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3847891154089607270, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3847891154089607271, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3847891154089607274, guid: dc8562a683a2ad448afb722a14e29519, type: 3}
