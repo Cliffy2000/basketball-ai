@@ -1,8 +1,8 @@
 using UnityEngine;
-using System.IO;
+using System;
 using UnityEditor.Scripting.Python;
 using UnityEditor;
-
+using System.Linq;
 
 public class Game : MonoBehaviour
 {
@@ -107,46 +107,62 @@ public class Game : MonoBehaviour
 
 public class Gene
 {
-    public float g1;
-    public float g2;
     int generation;
-
-    public Gene(float g1, float g2)
-    {
-        this.g1 = g1;
-        this.g2 = g2;
-    }
-
-    public override string ToString()
-    {
-        return "[" + g1 + "," + g2 + "," + score + "]";
-    }
-
     int[] geneShape;
     int[][] netShape;
-    float score;
+    public float score;
     float maxScore;
-    float[][][] genes;
-    float[] geneFlat;
+    float[] gene;
 
 
-    public Gene(int[] geneShape) {
+    public Gene(int[] geneShape, int[][] netShape) {
+        // Create the gene and calculate the network shape
         this.geneShape = geneShape;
-        netShape = new int[geneShape.Length - 1][];
+        this.netShape = netShape;
+        // Move this outside of gene creation
+        /*
         for (var i = 0; i < geneShape.Length-1; i++) {
             netShape[i] = new int[] { this.geneShape[i], this.geneShape[i + 1] };
         }
+        */
         this.maxScore = 100;
     }
 
     public void convertWeights(string input) {
-        
+        // Stores the input text string as an 1D array of floats inside the gene
+        string[] geneText = input.Split(' ');
+        gene = new float[geneText.Length];
+
+        for (var i=0; i<geneText.Length; i++) {
+            gene[i] = float.Parse(geneText[i]);
+        }
     }
+    
+    public void feedForward(float[] gameState) {
+        // store a value for each node
+        float[] nodeVals = new float[geneShape.Sum()];
 
-    public void passThrough(float[] gameState) {
-        float[] actions;
-        foreach (var layerSize in netShape) {
+        int filledNodeCount = 0; // number of nodes with filled values
+        for (var i=0; i<geneShape[0]; i++) {
+            // Insert the gameState into nodeVals as first layer
+            nodeVals[i] = gameState[i];
+            filledNodeCount++;
+        }
 
+        for (var nextLayer=1; nextLayer<geneShape.Length; nextLayer++) {
+            // Go through each next layer,
+            // calculate the weighted sums as each node value
+            int nodesInNext = geneShape[nextLayer];
+            int nodesInPrev = geneShape[nextLayer - 1];
+            // Calculate the value of each node in the next layer
+            for (var n=0; n<nodesInNext; n++) {
+                float nodeVal = 0;
+                // sum the weighted values from the previous layer
+                for (var p=0; p<nodesInPrev; p++) {
+                    int prevNodeIndex = filledNodeCount - nodesInPrev + p;
+                    nodeVal += gene[prevNodeIndex] * nodeVals[prevNodeIndex];
+                }
+            }
         }
     }
 }
