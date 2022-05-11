@@ -2,7 +2,7 @@ import random
 from unittest import result
 import os
 
-topPercent = 0.3
+topPercent = 0
 maxMutatePercent = 0.4
 # The size of each population
 popSize = 60
@@ -16,8 +16,8 @@ geneShape = [1, 3, 2]
 netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
 
 # this path is for the code to run within unity
-resultPath = '../../../Data/result.txt'
-nextGenPath = '../../../Data/nextGen.txt'
+resultPath = 'Data/result.txt'
+nextGenPath = 'Data/nextGen.txt'
 
 
 def randomGene():
@@ -56,20 +56,26 @@ def readPopulation(path=resultPath):
 
 def createNextGen(population):
     # must take in processed population from readPopulation()
-    population.sort(key=lambda x:x[-1], reverse=True)
+    population.sort(key=lambda x:float(x[-1]), reverse=True)
     scores = [max(float(g[-1]), minScore) for g in population]
     genes = [[float(g) for g in gene[0]] for gene in population]
     newPopulation = []
 
+    if (scores[0] > 70):
+        for i in range(popSize):
+            newPopulation.append(genes[0])
+        return newPopulation
+
     newPopulation += genes[:int(popSize*topPercent)]
     mutationRate = (1 - sum(scores)/(maxScore*popSize)) * maxMutatePercent
+    mutationRate = 1
 
     for i in range(int(popSize * mutationRate)):
         newPopulation.append(randomGene())
     
     crossCount = popSize - len(newPopulation)
     for i in range(crossCount):
-        parent1, parent2 = random.choices(genes, k=2, weights=scores)        
+        parent1, parent2 = random.choices(genes[:int(popSize*topPercent)], k=2, weights=scores[:int(popSize*topPercent)])        
         newPopulation.append([(m+n)/2 for m,n in zip(parent1, parent2)])
 
     return newPopulation        
@@ -81,8 +87,7 @@ newGen = createNewGen(data)
 newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
-initial = initializePopulation()
-writePopulation(initial, nextGenPath, score=" 50")
-p = readPopulation(nextGenPath)
-p1 = createNextGen(p)
-writePopulation(p1, path="../../../Data/testfile.txt")
+
+data = readPopulation()
+newGeneration = createNextGen(data)
+writePopulation(newGeneration)

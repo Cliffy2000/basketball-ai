@@ -1,5 +1,5 @@
 using UnityEngine;
-using System;
+using System.IO;
 using UnityEditor.Scripting.Python;
 using UnityEditor;
 using System.Linq;
@@ -7,11 +7,11 @@ using System.Linq;
 public class Game : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 3f;
+    private float genTime = 4.5f;
     private int populationSize = 60;
-    private int timeScale = 4;
+    private int timeScale = 20;
     private Gene[] genes;
-    private int generation = 0;
+    private int generation = 1;
     private int[] geneShape = new int[] {1,3,2};
     private int[] newShape;
 
@@ -20,6 +20,7 @@ public class Game : MonoBehaviour
     private GameObject[] players;
     private GameObject[] balls;
 
+    string starting_path = @"Data/starting.txt";
     string output_path = @"Data/result.txt";
     string input_path = @"Data/nextGen.txt";
 
@@ -33,17 +34,20 @@ public class Game : MonoBehaviour
         players = new GameObject[populationSize];
         balls = new GameObject[populationSize];
 
+        var lines = File.ReadAllLines(starting_path);
+
         for (var i = 0; i < populationSize; i++)
         {
-            genes[i] = new Gene();
+            genes[i] = new Gene(geneShape, generation);
+            genes[i].fromText(lines[i]);
         }
 
         // Generate random params
         for (var i = 0; i < populationSize; i++)
         {
-            players[i] = Instantiate(player, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
-            players[i].GetComponent<PlayerTraining1>().shootDirection = genes[i].g1;
-            players[i].GetComponent<PlayerTraining1>().shootForce = genes[i].g2;
+            // spawn player between -10 and 10
+            players[i] = Instantiate(player, new Vector3(10, 0, 0), Quaternion.identity);
+            players[i].GetComponent<PlayerTraining1>().gene = genes[i];
             balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
             players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
         }
@@ -64,7 +68,13 @@ public class Game : MonoBehaviour
                 totalScore += genes[i].score;
             }
 
-            Debug.Log("Generation: " + generation + " Score: " + totalScore);
+            if (totalScore > 3000) {
+                Time.timeScale = 1;
+            }
+
+            if (generation % 5 == 0 || Time.timeScale == 1) {
+                Debug.Log("Generation: " + generation + " Score: " + totalScore);
+            }
 
             string[] geneText = new string[populationSize];
             for (var i = 0; i < populationSize; i++)
@@ -73,14 +83,8 @@ public class Game : MonoBehaviour
             }
             File.WriteAllLines(output_path, geneText);
 
-
-            Debug.Log("Python started");
-
             string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
             PythonRunner.RunFile(scriptPath);
-
-            Debug.Log("Python finished");
-
 
             //Destoy previous population
             for (var i = 0; i < populationSize; i++)
@@ -92,11 +96,11 @@ public class Game : MonoBehaviour
             var lines = File.ReadAllLines(input_path);
             for (var i = 0; i < populationSize; i++)
             {
-                genes[i] = new Gene(float.Parse(lines[i].Split(' ')[0]), float.Parse(lines[i].Split(' ')[1]));
+                genes[i] = new Gene(geneShape, generation);
+                genes[i].fromText(lines[i]);
 
-                players[i] = Instantiate(player, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
-                players[i].GetComponent<PlayerTraining1>().shootDirection = genes[i].g1;
-                players[i].GetComponent<PlayerTraining1>().shootForce = genes[i].g2;
+                players[i] = Instantiate(player, new Vector3(10, 0, 0), Quaternion.identity);
+                players[i].GetComponent<PlayerTraining1>().gene = genes[i];
                 balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
                 players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
             }
@@ -127,7 +131,7 @@ public class Gene
         */
     }
 
-    public void convertWeights(string fileText) {
+    public void fromText(string fileText) {
         // Stores the input text string as an 1D array of floats inside the gene
         string[] geneText = fileText.Split(' ');
         gene = new float[geneText.Length];
@@ -137,11 +141,12 @@ public class Gene
         }
     }
     
-    public void feedForward(float[] gameState) {
+    public float[] feedForward(float[] gameState) {
         // store a value for each node
         float[] nodeVals = new float[geneShape.Sum()];
 
         int filledNodeCount = 0; // number of nodes with filled values
+        int passedEdges = 0; // number of used weights
         for (var i=0; i<geneShape[0]; i++) {
             // Insert the gameState into nodeVals as first layer
             nodeVals[i] = gameState[i];
@@ -158,11 +163,23 @@ public class Gene
                 float nodeVal = 0;
                 // sum the weighted values from the previous layer
                 for (var p=0; p<nodesInPrev; p++) {
-                    int prevNodeIndex = filledNodeCount - nodesInPrev + p;
-                    nodeVal += gene[prevNodeIndex] * nodeVals[prevNodeIndex];
+                    // Identifies the corresponding node value to get
+                    // filledNodeCount - n is the first node in the next layer
+                    int prevNodeIndex = filledNodeCount - n  - nodesInPrev + p;
+                    nodeVal += gene[passedEdges] * nodeVals[prevNodeIndex];
+                    passedEdges++;
                 }
+                nodeVals[filledNodeCount] = nodeVal;
+                filledNodeCount++;
             }
         }
+
+        return nodeVals.Skip(nodeVals.Length - geneShape.Last()).ToArray();
+    }
+
+    public override string ToString() {
+        string geneText = string.Join(" ", gene) + " " + score.ToString();
+        return geneText;
     }
 }
 

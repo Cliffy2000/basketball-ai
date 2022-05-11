@@ -15,6 +15,6 @@ public class ArmTraining1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Quaternion.Euler(0f, 0f, 180 - player_Script.shootDirection);
+        transform.rotation = Quaternion.Euler(0f, 0f, 180 - player_Script.armDirection);
     }
 }

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BallTraining1 : MonoBehaviour
 {
-    public float score = 0f;
+    public float score = 1f;
+    private bool touchGround = false;
     private float hoopTopTimer = -1f;
     private float evalTopTimer = -1f;
 
@@ -24,17 +25,29 @@ public class BallTraining1 : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.CompareTag("HoopTop")) hoopTopTimer = Time.time;
         if (collision.CompareTag("HoopBottom")) {
-            if (Time.time - hoopTopTimer <= 1f) {
+            if (Time.time - hoopTopTimer <= 1f && score <= 1f) {
                 ball_SpriteRenderer.color = new Color(0, 0.75f, 0, 1);
-                score = 10f;
+                if (touchGround) {
+                    score = 80f;
+                } else {
+                    score = 100f;
+                }
             } else hoopTopTimer = -1f;
         }
 
         if (collision.name == "Eval-Top") evalTopTimer = Time.time;
         if (collision.name == "Eval-Bottom") {
-            if (Time.time - evalTopTimer <= 1f && score != 10f) {
-                score = transform.position.x * -0.5f;
+            if (Time.time - evalTopTimer <= 1f && score <= 1f) {
+                float s = (transform.position.x + 20f) * 2;
+                if (touchGround) {
+                    s *= 0.75f;
+                }
+                score = s;
             }
+        }
+
+        if (collision.name == "Ground" && score == 0f) {
+            touchGround = true;
         }
     }
 }

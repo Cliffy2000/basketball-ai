@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerTraining1 : MonoBehaviour
 {
-    public float shootForce = 0.25f;
-    public float shootDirection = 0f;
+    // public float shootForce = 0.25f;
+    // public float shootDirection = 0f;
     public GameObject ball;
     public GameObject hand;
     private Rigidbody2D ball_rigidbody2D;
     private Rigidbody2D player_rigidbody2D;
+    public Gene gene;
+    public float armDirection = 0;
 
     public bool holding = true;
     private bool allowShoot = false;
@@ -35,7 +37,11 @@ public class PlayerTraining1 : MonoBehaviour
         if (allowShoot) {
             holding = false;
             allowShoot = false;
-            Vector2 shoot = shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
+            float[] posXNode = new float[] { (player_rigidbody2D.position.x + 10) / 30 } ;
+            float[] actions = gene.feedForward(posXNode);
+
+            armDirection = actions[1] * 360;
+            Vector2 shoot = ((actions[0] / 2.5f) + 0.2f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
             ball_rigidbody2D.velocity = new(0, 0);
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
         }
@@ -45,15 +51,5 @@ public class PlayerTraining1 : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground")) {
             allowShoot = true;
         }
-    }
-
-    public void reset(Rigidbody2D b) {
-        shootDirection = Random.Range(0, 360);
-        shootForce = Random.Range(0.2f, 0.4f);
-        holding = true;
-        allowShoot = false;
-        player_rigidbody2D.MovePosition(new(transform.position.x, transform.position.y + 5));
-        ball_rigidbody2D.velocity = new Vector2(0, 0);
-        ball_rigidbody2D.angularVelocity = 0;
     }
 }
