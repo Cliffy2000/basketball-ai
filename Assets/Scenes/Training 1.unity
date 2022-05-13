@@ -213,7 +213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 808387335807788430, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_Name
-      value: Hoop_Back
+      value: Hoop-Back
       objectReference: {fileID: 0}
     - target: {fileID: 808387335807788430, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_TagString
@@ -221,7 +221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 808387336842495404, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_Name
-      value: Hoop_Front
+      value: Hoop-Front
       objectReference: {fileID: 0}
     - target: {fileID: 808387336842495404, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_TagString

@@ -1,5 +1,4 @@
 import random
-from unittest import result
 import os
 
 topPercent = 0.25
@@ -8,10 +7,9 @@ maxMutatePercent = 0.4
 popSize = 75
 geneSize = 2
 # maximum and minimum score of a gene, used also to calculate performance
-minScore = 1
 maxScore = 100
 # geneShape is an array indicating the number of nodes in each layer including input and output
-geneShape = [1, 3, 2]
+geneShape = [2, 4, 3]
 # netShape is a 2D array that shows the shape of the array of weights between neighboring layers
 netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
 
@@ -22,7 +20,7 @@ nextGenPath = 'Data/nextGen.txt'
 
 def randomGene():
     # creates a gene with random edge weights as a 1d list
-    gene = [random.random() for i in range(sum([m*n for m,n in netShape]))]
+    gene = [(random.random()-0.5)*2 for i in range(sum([m*n for m,n in netShape]))]
     return gene
 
 
@@ -57,13 +55,14 @@ def readPopulation(path=resultPath):
 def createNextGen(population):
     # must take in processed population from readPopulation()
     population.sort(key=lambda x:float(x[-1]), reverse=True)
-    scores = [max(float(g[-1]), minScore) for g in population]
+    scores = [float(g[-1]) for g in population]
     genes = [[float(g) for g in gene[0]] for gene in population]
     newPopulation = []
 
     newPopulation += genes[:int(popSize*topPercent)]
-    mutationRate = (1 - sum(scores)/(maxScore*popSize)) * maxMutatePercent
+    mutationRate = (1 - sum(scores)/(maxScore*popSize)) * maxMutatePercent # controls the portion of mutation
 
+    # for every mutation count, add a new individual
     for i in range(int(popSize * mutationRate)):
         newPopulation.append(randomGene())
     
@@ -82,7 +81,7 @@ newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
 
-
-data = readPopulation()
-newGeneration = createNextGen(data)
-writePopulation(newGeneration)
+if __name__ == 'unity':
+    data = readPopulation()
+    newGeneration = createNextGen(data)
+    writePopulation(newGeneration)

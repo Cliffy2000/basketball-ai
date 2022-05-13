@@ -8,12 +8,17 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 4.5f;
+    private float genTime = 7f;
     private int populationSize = 75;
     private int timeScale = 1;
     private Gene[] genes;
     private int generation = 1;
-    private int[] geneShape = new int[] {1,3,2};
+    private int[] geneShape = new int[] {2,4,3};
+    /*  Task: Score while the movement of the player is constant speed
+     *  Current gene shape ~ game:
+     *  Input Layer: posX of the player
+     *  Output Layer: shootAngle, shootForce, shootTrigger
+     */
     private int[] newShape;
     private float topScore = 0;
 
@@ -33,16 +38,13 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
-        /*
-        Scene newScene = SceneManager.CreateScene("Empty");
-        Debug.Log(SceneManager.GetSceneByName("Empty"));
-        SceneManager.LoadScene("Empty", LoadSceneMode.Additive);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName("Empty"));
-        */
         Time.timeScale = timeScale;
         genes = new Gene[populationSize];
         players = new GameObject[populationSize];
         balls = new GameObject[populationSize];
+
+        string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/setup.py");
+        PythonRunner.RunFile(scriptPath, "unity");
 
         var lines = File.ReadAllLines(starting_path);
 
@@ -56,7 +58,7 @@ public class Game : MonoBehaviour
         for (var i = 0; i < populationSize; i++)
         {
             // spawn player between -10 and 10
-            players[i] = Instantiate(player, new Vector3(Random.Range(10, 15), 0, 0), Quaternion.identity);
+            players[i] = Instantiate(player, new Vector3(Random.Range(15, 25), 0, 0), Quaternion.identity);
             players[i].GetComponent<PlayerTraining1>().gene = genes[i];
             balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
             players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
@@ -94,7 +96,7 @@ public class Game : MonoBehaviour
             }
             generation += 1;
             string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
-            PythonRunner.RunFile(scriptPath);
+            PythonRunner.RunFile(scriptPath, "unity");
 
             //Destoy previous population
             for (var i = 0; i < populationSize; i++)
@@ -109,7 +111,7 @@ public class Game : MonoBehaviour
                 genes[i] = new Gene(geneShape, generation);
                 genes[i].fromText(lines[i]);
 
-                players[i] = Instantiate(player, new Vector3(Random.Range(10, 15), 0, 0), Quaternion.identity);
+                players[i] = Instantiate(player, new Vector3(Random.Range(15, 25), 0, 0), Quaternion.identity);
                 players[i].GetComponent<PlayerTraining1>().gene = genes[i];
                 balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
                 players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
@@ -125,7 +127,7 @@ public class Gene
 {
     int generation;
     int[] geneShape;
-    public float score;
+    public float score = 1f;
     float[] gene; // an array of all the weights
 
 
@@ -179,6 +181,12 @@ public class Gene
                     nodeVal += gene[passedEdges] * nodeVals[prevNodeIndex];
                     passedEdges++;
                 }
+                // TODO: hard coded index change to index -1
+                if (filledNodeCount > geneShape[0] && filledNodeCount <= (geneShape[0]+geneShape[1])) {
+                    // Activation function
+                    if (nodeVal < 0) nodeVal = 0;
+                }
+                // TODO: activation function
                 nodeVals[filledNodeCount] = nodeVal;
                 filledNodeCount++;
             }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class BallTraining1 : MonoBehaviour
 {
     public float score = 1f;
-    private bool touchGround = false;
     private bool lockScore = false;
     private float hoopTopTimer = -1f;
     private float evalTopTimer = -1f;
@@ -27,35 +26,31 @@ public class BallTraining1 : MonoBehaviour
         if (collision.CompareTag("HoopTop")) hoopTopTimer = Time.time;
         if (collision.CompareTag("HoopBottom")) {
             if (Time.time - hoopTopTimer <= 1f && !lockScore) {
-                float s = 100f;
-                if (touchGround) {
-                    s *= 0.5f;
-                }
+                score = 100f;
                 ball_SpriteRenderer.color = new Color(0, 0.75f, 0, 1);
-                score = s;
                 lockScore = true;
             } else hoopTopTimer = -1f;
         }
-
+ 
         if (collision.name == "Eval-Top") evalTopTimer = Time.time;
         if (collision.name == "Eval-Bottom") {
             if (Time.time - evalTopTimer <= 1f && !lockScore) {
-                float s = (transform.position.x / -20f) * 40;
-                if (touchGround) {
-                    s *= 0.65f;
-                }
-                score = Mathf.Max(s, score);
+                score = (transform.position.x / -20f) * 40;
                 lockScore = true;
             }
         }
 
-        if (collision.CompareTag("Hoop") && !touchGround && !lockScore) {
-            score = Mathf.Max(score, 70f);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.collider.gameObject.CompareTag("Hoop") && !lockScore) {
+            score = Mathf.Max(score, 75f);
         }
 
 
-        if (collision.name == "Ground" && !lockScore) {
-            touchGround = true;
+        if (collision.gameObject.CompareTag("Ground") && !lockScore) {
+            score = 3;
+            lockScore = true;
         }
     }
 }

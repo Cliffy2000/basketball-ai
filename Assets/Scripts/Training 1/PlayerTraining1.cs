@@ -12,13 +12,15 @@ public class PlayerTraining1 : MonoBehaviour
     private Rigidbody2D player_rigidbody2D;
     public Gene gene;
     public float armDirection = 0;
+    public float randomV;
 
     public bool holding = true;
-    private bool allowShoot = false;
+    private bool grounded = false;
     // Start is called before the first frame update
     void Start() {
         ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
         player_rigidbody2D = GetComponent<Rigidbody2D>();
+        randomV = Random.Range(-6, -14);
     }
 
     public void setBall(GameObject ball) {
@@ -34,12 +36,15 @@ public class PlayerTraining1 : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        if (allowShoot) {
-            holding = false;
-            allowShoot = false;
-            float[] posXNode = new float[] { (player_rigidbody2D.position.x - 10) / 5 } ;
-            float[] actions = gene.feedForward(posXNode);
+        if (grounded) {
+            player_rigidbody2D.velocity = new Vector2(randomV, 0);
+        }
+        
+        float[] posXNode = new float[] { (player_rigidbody2D.position.x + 15f) / 40, player_rigidbody2D.velocity.x } ;
+        float[] actions = gene.feedForward(posXNode);
 
+        if (actions[2] > 0.2f && grounded && holding) {
+            holding = false;
             armDirection = actions[1] * 360;
             Vector2 shoot = ((actions[0] / 2.5f) + 0.2f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
             ball_rigidbody2D.velocity = new(0, 0);
@@ -49,7 +54,7 @@ public class PlayerTraining1 : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag("Ground")) {
-            allowShoot = true;
+            grounded = true;
         }
     }
 }
