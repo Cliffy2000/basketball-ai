@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallTraining1 : MonoBehaviour
 {
-    public float score = 1f;
+    public float score;
     private bool lockScore = false;
     private float hoopTopTimer = -1f;
     private float evalTopTimer = -1f;
@@ -14,6 +14,7 @@ public class BallTraining1 : MonoBehaviour
     void Start()
     {
         ball_SpriteRenderer = GetComponent<SpriteRenderer>();
+        score = 1.5f;
     }
 
     // Update is called once per frame

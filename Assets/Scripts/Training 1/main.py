@@ -5,11 +5,10 @@ topPercent = 0.25
 maxMutatePercent = 0.4
 # The size of each population
 popSize = 75
-geneSize = 2
 # maximum and minimum score of a gene, used also to calculate performance
 maxScore = 100
 # geneShape is an array indicating the number of nodes in each layer including input and output
-geneShape = [2, 4, 3]
+geneShape = [2, 4, 4, 3]
 # netShape is a 2D array that shows the shape of the array of weights between neighboring layers
 netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
 

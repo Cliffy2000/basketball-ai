@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
     private int timeScale = 1;
     private Gene[] genes;
     private int generation = 1;
-    private int[] geneShape = new int[] {2,4,3};
+    private int[] geneShape = new int[] {2,4,4,3};
     /*  Task: Score while the movement of the player is constant speed
      *  Current gene shape ~ game:
      *  Input Layer: posX of the player
@@ -127,7 +127,7 @@ public class Gene
 {
     int generation;
     int[] geneShape;
-    public float score = 1f;
+    public float score = 1;
     float[] gene; // an array of all the weights
 
 
@@ -135,12 +135,6 @@ public class Gene
         // Create the gene and calculate the network shape
         this.geneShape = geneShape;
         this.generation = generation;
-        // Move this outside of gene creation
-        /*
-        for (var i = 0; i < geneShape.Length-1; i++) {
-            netShape[i] = new int[] { this.geneShape[i], this.geneShape[i + 1] };
-        }
-        */
     }
 
     public void fromText(string fileText) {
@@ -151,6 +145,12 @@ public class Gene
         for (var i=0; i<geneText.Length; i++) {
             gene[i] = float.Parse(geneText[i]);
         }
+    }
+
+    public float sigmoid(float x) {
+        // the exact natural constant e is hard to directly import and using a simpler number doesn't
+        // cause any significant effect
+        return (1 - Mathf.Pow(3.17f, -x)) / (1 + Mathf.Pow(3.17f, -x));
     }
     
     public float[] feedForward(float[] gameState) {
@@ -181,12 +181,15 @@ public class Gene
                     nodeVal += gene[passedEdges] * nodeVals[prevNodeIndex];
                     passedEdges++;
                 }
-                // TODO: hard coded index change to index -1
-                if (filledNodeCount > geneShape[0] && filledNodeCount <= (geneShape[0]+geneShape[1])) {
+                if (filledNodeCount > geneShape[0] && filledNodeCount <= (geneShape.Sum() - geneShape[geneShape.Length - 1])) {
                     // Activation function
                     if (nodeVal < 0) nodeVal = 0;
                 }
                 // TODO: activation function
+                if (nodeVals.Length - filledNodeCount > geneShape[geneShape.Length - 1]) {
+                    // if this node is not on the last output layer
+                    nodeVal = sigmoid(nodeVal);
+                }
                 nodeVals[filledNodeCount] = nodeVal;
                 filledNodeCount++;
             }
@@ -200,4 +203,3 @@ public class Gene
         return geneText;
     }
 }
-
