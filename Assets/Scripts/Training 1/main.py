@@ -13,8 +13,8 @@ geneShape = [2, 4, 4, 3]
 netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
 
 # this path is for the code to run within unity
-resultPath = 'Data/result.txt'
-nextGenPath = 'Data/nextGen.txt'
+resultPath = '../../../Data/result.txt'
+nextGenPath = '../../../Data/nextGen.txt'
 
 
 def randomGene():
@@ -22,13 +22,14 @@ def randomGene():
     gene = [(random.random()-0.5)*2 for i in range(sum([m*n for m,n in netShape]))]
     return gene
 
-
+'''
 def initializePopulation():
     # returns a list of genes as a 2d list
     population = []
     for g in range(popSize):
         population.append(randomGene())
     return population
+'''
 
 
 def writePopulation(population, path=nextGenPath, score=''):
@@ -56,6 +57,8 @@ def createNextGen(population):
     population.sort(key=lambda x:float(x[-1]), reverse=True)
     scores = [float(g[-1]) for g in population]
     genes = [[float(g) for g in gene[0]] for gene in population]
+    for gene in genes:
+        print(gene)
     newPopulation = []
 
     newPopulation += genes[:int(popSize*topPercent)]
@@ -80,7 +83,7 @@ newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
 
-if __name__ == 'unity':
+if __name__ == 'unity' or __name__ == '__main__':
     data = readPopulation()
     newGeneration = createNextGen(data)
     writePopulation(newGeneration)
