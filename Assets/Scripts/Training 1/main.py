@@ -1,8 +1,8 @@
+from curses import newpad
+from ntpath import join
 import random
 import os
 
-topPercent = 0.25
-maxMutatePercent = 0.4
 # The size of each population
 popSize = 75
 # maximum and minimum score of a gene, used also to calculate performance
@@ -13,8 +13,16 @@ geneShape = [2, 4, 4, 3]
 netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
 
 # this path is for the code to run within unity
+resultPath = 'Data/result.txt'
+nextGenPath = 'Data/nextGen.txt'
+result_comparePath = 'Data/result_compare.txt'
+
+'''
+# Command line arguments:
 resultPath = '../../../Data/result.txt'
 nextGenPath = '../../../Data/nextGen.txt'
+result_comparePath = '../../../Data/result_compare.txt'
+'''
 
 
 def randomGene():
@@ -51,27 +59,116 @@ def readPopulation(path=resultPath):
     f.close()
     return population
 
+def nextGen_basic(old_population, scores):
+    '''
+    Selection: gets rid of the bottom 1/2 of the population
+    Crossover: randomly selects two parents and creates two children with a random crossover point, 
+        this is repeated len(new_population) * crossoverProbability / 2 times
+    Mutation: for each gene, mutate at the probability of mutationProbability, 
+        if do mutate, randomly choose two values and replace them by a new random value
+    '''
+    mutationProbability = 0.1
+    crossoverProbability = 0.8
+    # Selection, only keeping the top 1/2 of the population
+    new_population = old_population[:popSize//2]
+    print(len(old_population))
+    print(len(new_population))
+    
+    # Crossover: crossoverProbability means the proportion of the old_population
+    # that was kept that will be mutated
+    # # It is divided by 2 because each crossover takes 2 parents
+    for i in range(int(len(new_population) * crossoverProbability / 2)):
+        # Randomly select two parents
+        parent1 = random.choice(old_population)
+        parent2 = random.choice(old_population)
+        # Crossover the two parents
+        # Randomly select a crossover point
+        crossPoint = random.randint(0, len(parent1)-1)
+        # Create the child
+        child1 = parent1[:crossPoint] + parent2[crossPoint:]
+        child2 = parent2[:crossPoint] + parent1[crossPoint:]
+        # Add the child to the new population
+        new_population.append(child1)
+        new_population.append(child2)
+    print(int(len(new_population) * crossoverProbability / 2))
+    # Mutation: mutationProbability means the proportion of the new_population
+    # that will be mutated. This new_population contains the newly created crossover children
+    for i in range(len(new_population)):
+        rand_posibility = random.random()
+        if rand_posibility < mutationProbability:
+            # Mutate the gene by randomly choosing 2 values and replacing them with new random values
+            replace_index = random.choices(range(len(new_population[i])), k=2)
+            new_population[i][replace_index[0]] = (random.random()-0.5)*2
+            new_population[i][replace_index[1]] = (random.random()-0.5)*2
+
+    # Fill the rest of the population with random genes
+    for i in range(len(new_population), popSize):
+        new_population.append(randomGene())
+    
+    print(len(new_population))
+    return new_population
+
+def nextGen_adaptive_mutation(old_population, scores):
+    '''
+    Selection: gets rid of the bottom 1/2 of the population
+    Crossover: randomly selects two parents and creates two children with a random crossover point, 
+        this is repeated len(new_population) * crossoverProbability / 2 times
+    Mutation: for each gene, mutate at the probability of mutationProbability ACCORDING TO THE SCORE, 
+        if do mutate, randomly choose two values and replace them by a new random value
+    '''
+    minMP = 0.1 # minimum mutation probability
+    maxMP = 0.5    # maximum mutation probability
+    MP_interval = (maxMP - minMP) / popSize
+    mutationProbability = [minMP + i*MP_interval for i in range(popSize)]
+    print(mutationProbability)
+    crossoverProbability = 0.8
+    # Selection, only keeping the top 1/2 of the population
+    new_population = old_population[:popSize//2]
+    
+    # Crossover: crossoverProbability means the proportion of the old_population
+    # that was kept that will be mutated
+    # # It is divided by 2 because each crossover takes 2 parents
+    for i in range(int(len(new_population) * crossoverProbability / 2)):
+        # Randomly select two parents
+        parent1 = random.choice(old_population)
+        parent2 = random.choice(old_population)
+        # Crossover the two parents
+        # Randomly select a crossover point
+        crossPoint = random.randint(0, len(parent1)-1)
+        # Create the child
+        child1 = parent1[:crossPoint] + parent2[crossPoint:]
+        child2 = parent2[:crossPoint] + parent1[crossPoint:]
+        # Add the child to the new population
+        new_population.append(child1)
+        new_population.append(child2)
+
+    # Fill the rest of the population with random genes
+    for i in range(len(new_population), popSize):
+        new_population.append(randomGene())
+
+    # Mutation: mutationProbability means the proportion of the new_population
+    # that will be mutated. This new_population contains the newly created crossover children
+    for i in range(len(new_population)):
+        rand_posibility = random.random()
+        if rand_posibility < mutationProbability[i]:
+            # Mutate the gene by randomly choosing 2 values and replacing them with new random values
+            replace_index = random.choices(range(len(new_population[i])), k=2)
+            new_population[i][replace_index[0]] = (random.random()-0.5)*2
+            new_population[i][replace_index[1]] = (random.random()-0.5)*2
+    
+    print(len(new_population))
+    return new_population
 
 def createNextGen(population):
     # must take in processed population from readPopulation()
+    
+    # Sort the population by score
     population.sort(key=lambda x:float(x[-1]), reverse=True)
     scores = [float(g[-1]) for g in population]
+    # Convert population to a list of genes(string -> float)
     genes = [[float(g) for g in gene[0]] for gene in population]
-    for gene in genes:
-        print(gene)
-    newPopulation = []
-
-    newPopulation += genes[:int(popSize*topPercent)]
-    mutationRate = (1 - sum(scores)/(maxScore*popSize)) * maxMutatePercent # controls the portion of mutation
-
-    # for every mutation count, add a new individual
-    for i in range(int(popSize * mutationRate)):
-        newPopulation.append(randomGene())
     
-    crossCount = popSize - len(newPopulation)
-    for i in range(crossCount):
-        parent1, parent2 = random.choices(genes[:int(popSize*topPercent)], k=2, weights=scores[:int(popSize*topPercent)])        
-        newPopulation.append([(m+n)/2 for m,n in zip(parent1, parent2)])
+    newPopulation = nextGen_adaptive_mutation(genes, scores)
 
     return newPopulation        
 
@@ -85,5 +182,8 @@ writeData(newGenText)
 
 if __name__ == 'unity' or __name__ == '__main__':
     data = readPopulation()
+
+    genes = [[float(g) for g in gene[0]] for gene in data]
+    writePopulation(genes, result_comparePath)
     newGeneration = createNextGen(data)
     writePopulation(newGeneration)

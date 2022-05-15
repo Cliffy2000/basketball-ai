@@ -19,7 +19,7 @@ content = os.listdir(folderPath)
 
 def randomGene():
     # creates a gene with random edge weights as a 1d list
-    gene = [random.random() for i in range(sum([m*n for m,n in netShape]))]
+    gene = [(random.random()-0.5)*2 for i in range(sum([m*n for m,n in netShape]))]
     return gene
 
 
