@@ -114,6 +114,7 @@ def nextGen_adaptive_mutation(old_population, scores):
     Crossover: randomly selects two parents and creates two children with a random crossover point, 
         this is repeated len(new_population) * crossoverProbability / 2 times
     Mutation: for each gene, mutate at the probability of mutationProbability ACCORDING TO THE SCORE, 
+        The mutation probability is evenly distributed across the population, between minMP and maxMP
         if do mutate, randomly choose two values and replace them by a new random value
     '''
     minMP = 0.1 # minimum mutation probability
