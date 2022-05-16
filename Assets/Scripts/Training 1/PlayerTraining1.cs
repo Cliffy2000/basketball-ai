@@ -47,10 +47,6 @@ public class PlayerTraining1 : MonoBehaviour
             Vector2 shoot = ((actions[0] / 2.5f) + 0.15f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
             ball_rigidbody2D.velocity = new(0, 0);
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
-            if (transform.position.x < 9) {
-                ball_Script.score = 2;
-                ball_Script.lockScore = true;
-            }
         }
 
         if (grounded) {
