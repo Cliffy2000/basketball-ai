@@ -5,7 +5,7 @@ using UnityEngine;
 public class BallTraining1 : MonoBehaviour
 {
     public float score;
-    private bool lockScore = false;
+    public bool lockScore = false;
     private float hoopTopTimer = -1f;
     private float evalTopTimer = -1f;
 
@@ -14,13 +14,13 @@ public class BallTraining1 : MonoBehaviour
     void Start()
     {
         ball_SpriteRenderer = GetComponent<SpriteRenderer>();
-        score = 1.5f;
+        score = 1f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -36,7 +36,7 @@ public class BallTraining1 : MonoBehaviour
         if (collision.name == "Eval-Top") evalTopTimer = Time.time;
         if (collision.name == "Eval-Bottom") {
             if (Time.time - evalTopTimer <= 1f && !lockScore) {
-                score = (transform.position.x / -20f) * 40;
+                score = Mathf.Max((transform.position.x / -20f) * 40, score);
                 lockScore = true;
             }
         }
@@ -46,12 +46,6 @@ public class BallTraining1 : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.gameObject.CompareTag("Hoop") && !lockScore) {
             score = Mathf.Max(score, 75f);
-        }
-
-
-        if (collision.gameObject.CompareTag("Ground") && !lockScore) {
-            score = 3;
-            lockScore = true;
         }
     }
 }

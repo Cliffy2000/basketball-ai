@@ -10,24 +10,24 @@ public class PlayerTraining1 : MonoBehaviour
     public GameObject hand;
     private Rigidbody2D ball_rigidbody2D;
     private Rigidbody2D player_rigidbody2D;
+    private BallTraining1 ball_Script;
     public Gene gene;
+    public float vX;
     public float armDirection = 0;
-    public float randomV;
-    private bool prevdecision = false;
-    private int changeCounter = 0;
+    public bool shootPos = false;
 
     public bool holding = true;
-    private bool grounded = false;
+    public bool grounded = false;
     // Start is called before the first frame update
     void Start() {
         ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
         player_rigidbody2D = GetComponent<Rigidbody2D>();
-        randomV = Random.Range(-6, -14);
     }
 
     public void setBall(GameObject ball) {
         this.ball = ball;
         ball_rigidbody2D = ball.GetComponent<Rigidbody2D>();
+        ball_Script = ball.GetComponent<BallTraining1>();
     }
 
     // Update is called once per frame
@@ -38,30 +38,28 @@ public class PlayerTraining1 : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        if (grounded) {
-            player_rigidbody2D.velocity = new Vector2(randomV, 0);
-        }
-        
-        float[] posXNode = new float[] { (player_rigidbody2D.position.x + 15f) / 40, player_rigidbody2D.velocity.x } ;
+        float[] posXNode = new float[] { (player_rigidbody2D.position.x + 25f) / 25} ;
         float[] actions = gene.feedForward(posXNode);
-
-        if ((actions[2] > 0 && !prevdecision) || (actions[2] < 0 && prevdecision)) {
-            changeCounter += 1;
-            prevdecision = !prevdecision;
-            if (changeCounter >= 2) {
-                Debug.Log("change detected");
-            }
-        }
+        armDirection = actions[1] * 1440;
 
         if (actions[2] > 0f && grounded && holding) {
-            if (transform.position.x < 10) {
-                Debug.Log("SUCCESS");
-            }
             holding = false;
-            armDirection = actions[1] * 360;
-            Vector2 shoot = ((actions[0] / 2.5f) + 0.2f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
+            Vector2 shoot = ((actions[0] / 2.5f) + 0.15f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
             ball_rigidbody2D.velocity = new(0, 0);
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
+            if (transform.position.x < 9) {
+                ball_Script.score = 2;
+                ball_Script.lockScore = true;
+            }
+        }
+
+        if (grounded) {
+            if (actions[3] > 0) {
+                vX = -11;
+            } else if (actions[3] < -0) {
+                vX = 11;
+            }
+            player_rigidbody2D.velocity = new Vector2(vX, 0);
         }
     }
 

@@ -8,12 +8,14 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 7f;
-    private int populationSize = 75;
+    private float genTime = 5f;
+    private int populationSize = 300;
+    private int iterationSize = 100;
+    private int iterationNum = 0;
     private int timeScale = 1;
     private Gene[] genes;
-    private int generation = 1;
-    private int[] geneShape = new int[] {2,4,4,3};
+    private int generation = 0;
+    private int[] geneShape = new int[] {1,3,3,4};
     /*  Task: Score while the movement of the player is constant speed
      *  Current gene shape ~ game:
      *  Input Layer: posX of the player
@@ -55,70 +57,75 @@ public class Game : MonoBehaviour
         }
 
         // Generate random params
-        for (var i = 0; i < populationSize; i++)
-        {
-            // spawn player between -10 and 10
-            players[i] = Instantiate(player, new Vector3(Random.Range(15, 25), 0, 0), Quaternion.identity);
-            players[i].GetComponent<PlayerTraining1>().gene = genes[i];
-            balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
-            players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
-        }
+
+        createIteration();
 
         genStartTime = Time.time;
     }
 
     private void Update()
     {
-        if (Time.time - genStartTime > genTime && !isRunning)
-        {
-            isRunning = true;
-            float totalScore = 0f;
-            for (var i = 0; i < populationSize; i++)
-            {
-                genes[i].score = balls[i].GetComponent<BallTraining1>().score;
-                totalScore += genes[i].score;
+
+        if (Time.time - genStartTime > genTime && !isRunning) {
+            iterationNum += 1;
+            if (iterationNum * iterationSize >= populationSize) {
+                isRunning = true;
+                string[] geneText = new string[populationSize];
+                for (var i = 0; i < iterationSize; i++) {
+                    genes[i + (iterationNum-1)*iterationSize].score = balls[i + (iterationNum - 1) * iterationSize].GetComponent<BallTraining1>().score;
+                }
+                for (var i = 0; i < populationSize; i++) {
+                    geneText[i] = genes[i].ToString();
+                }
+                File.WriteAllLines(output_path, geneText);
+                generation += 1;
+
+                Debug.Log("Generation " + generation + " complete.");
+                string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
+                PythonRunner.RunFile(scriptPath, "unity");
+
+                //Destoy previous population
+                for (var i = 0; i < populationSize; i++) {
+                    Destroy(players[i]);
+                    Destroy(balls[i]);
+                }
+
+                var lines = File.ReadAllLines(input_path);
+                iterationNum = 0;
+                // generate new population array from file
+                for (var i = 0; i < populationSize; i++) {
+                    genes[i] = new Gene(geneShape, generation);
+                    genes[i].fromText(lines[i]);
+                }
+
+                createIteration();
+
+                genStartTime = Time.time;
+                isRunning = false;
+            } 
+            else {
+                for (var i = 0; i < iterationSize; i++) {
+                    genes[i + (iterationNum - 1) * iterationSize].score = balls[i + (iterationNum - 1) * iterationSize].GetComponent<BallTraining1>().score;
+                }
+                for (var i = 0; i < populationSize; i++) {
+                    Destroy(players[i]);
+                    Destroy(balls[i]);
+                }
+
+                // create balls and players for current iteration
+                createIteration();
+
+                genStartTime = Time.time;
             }
+        } 
+    }
 
-            Debug.Log("Generation: " + generation + " Score: " + totalScore);
-
-            string[] geneText = new string[populationSize];
-            for (var i = 0; i < populationSize; i++)
-            {
-                geneText[i] = genes[i].ToString();
-            }
-            File.WriteAllLines(output_path, geneText);
-            string t = "Generation: " + generation + " Score: " + totalScore + "\n";
-            File.AppendAllText(score_path, t);
-            if (totalScore > topScore) {
-                File.WriteAllText(bestGen_path, t);
-                File.AppendAllLines(bestGen_path, geneText);
-                topScore = totalScore;
-            }
-            generation += 1;
-            string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
-            PythonRunner.RunFile(scriptPath, "unity");
-
-            //Destoy previous population
-            for (var i = 0; i < populationSize; i++)
-            {   
-                Destroy(players[i]);
-                Destroy(balls[i]);
-            }
-
-            var lines = File.ReadAllLines(input_path);
-            for (var i = 0; i < populationSize; i++)
-            {
-                genes[i] = new Gene(geneShape, generation);
-                genes[i].fromText(lines[i]);
-
-                players[i] = Instantiate(player, new Vector3(Random.Range(15, 25), 0, 0), Quaternion.identity);
-                players[i].GetComponent<PlayerTraining1>().gene = genes[i];
-                balls[i] = Instantiate(ball, new Vector3(i * 0.0f, 0, 0), Quaternion.identity);
-                players[i].GetComponent<PlayerTraining1>().setBall(balls[i]);
-            }
-
-            genStartTime = Time.time;
-            isRunning = false;
+    private void createIteration() {
+        for (var i = 0; i < iterationSize; i++) {
+            players[i + (iterationSize * iterationNum)] = Instantiate(player, new Vector3(Random.Range(20, 25), 0, 0), Quaternion.identity);
+            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1>().gene = genes[i + (iterationSize * iterationNum)];
+            balls[i + (iterationSize * iterationNum)] = Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
+            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1>().setBall(balls[i + (iterationSize * iterationNum)]);
         }
     }
 }
@@ -181,12 +188,9 @@ public class Gene
                     nodeVal += gene[passedEdges] * nodeVals[prevNodeIndex];
                     passedEdges++;
                 }
-                if (filledNodeCount > geneShape[0] && filledNodeCount <= (geneShape.Sum() - geneShape[geneShape.Length - 1])) {
-                    // Activation function
-                    if (nodeVal < 0) nodeVal = 0;
-                }
                 // TODO: activation function
-                if (nodeVals.Length - filledNodeCount > geneShape[geneShape.Length - 1]) {
+                if ((nodeVals.Length - filledNodeCount > geneShape[geneShape.Length - 1]) &&
+                    (filledNodeCount >= geneShape[0])) {
                     // if this node is not on the last output layer
                     nodeVal = sigmoid(nodeVal);
                 }
