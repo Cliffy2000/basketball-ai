@@ -218,8 +218,8 @@ GameObject:
   - component: {fileID: 808387335807788431}
   - component: {fileID: 808387335807788428}
   m_Layer: 0
-  m_Name: GameObject (1)
-  m_TagString: Untagged
+  m_Name: Hoop-Back
+  m_TagString: Hoop
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -246,7 +246,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808387335807788430}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 6200000, guid: 6e797919e39c1cf4d82de735660b6dbb, type: 2}
   m_IsTrigger: 0
@@ -450,8 +450,8 @@ GameObject:
   - component: {fileID: 808387336842495405}
   - component: {fileID: 808387336842495410}
   m_Layer: 0
-  m_Name: GameObject (2)
-  m_TagString: Untagged
+  m_Name: Hoop-Front
+  m_TagString: Hoop
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

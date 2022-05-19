@@ -34,6 +34,7 @@ public class PlayerTraining1 : MonoBehaviour
     void Update() {
         if (holding) {
             ball_rigidbody2D.transform.position = hand.transform.position;
+            ball_rigidbody2D.velocity = player_rigidbody2D.velocity;
         }
     }
 
@@ -45,14 +46,14 @@ public class PlayerTraining1 : MonoBehaviour
         if (actions[2] > 0f && grounded && holding) {
             holding = false;
             Vector2 shoot = ((actions[0] / 2.5f) + 0.15f) * new Vector2(Mathf.Sin(armDirection * Mathf.Deg2Rad), Mathf.Cos(armDirection * Mathf.Deg2Rad));
-            ball_rigidbody2D.velocity = new(0, 0);
+            //ball_rigidbody2D.velocity = new(0, 0);
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
         }
 
         if (grounded) {
-            if (actions[3] > 0) {
+            if (actions[3] > 0.2) {
                 vX = -11;
-            } else if (actions[3] < -0) {
+            } else if (actions[3] < -0.2) {
                 vX = 11;
             }
             player_rigidbody2D.velocity = new Vector2(vX, 0);
