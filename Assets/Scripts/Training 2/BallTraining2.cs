@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class BallTraining2 : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private SpriteRenderer ball_spriteRenderer;
+
     void Start()
+    {
+        ball_spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+
+    void Update()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D collision) {
         
     }
 }

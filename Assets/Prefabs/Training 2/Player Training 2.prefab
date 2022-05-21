@@ -301,3 +301,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af37e48a11a28e4eba735d41c027046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ball: {fileID: 0}
+  hand: {fileID: 4401892755955691633}

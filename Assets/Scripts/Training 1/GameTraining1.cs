@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-public class Game : MonoBehaviour
+public class GameTraining1 : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 5f;
