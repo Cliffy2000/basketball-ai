@@ -22,7 +22,7 @@ public class PlayerTraining2 : MonoBehaviour {
     private Rigidbody2D ball_rigidbody2D;
     private BallTraining2 ball_script;
 
-    public Gene gene;
+    public GeneV2 gene;
 
     private float shootForce;
     private float shootDirection;
