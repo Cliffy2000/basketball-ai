@@ -18,6 +18,7 @@ public class PlayerTraining2 : MonoBehaviour {
     public GameObject hand;
 
     private Rigidbody2D player_rigidbody2D;
+    private Animator player_animator;
     private Rigidbody2D ball_rigidbody2D;
     private BallTraining2 ball_script;
 
@@ -33,7 +34,10 @@ public class PlayerTraining2 : MonoBehaviour {
     private bool grounded = false;
     private bool stopped = false;
 
+    private float error = 0;
     private bool pendingShoot = false;
+    private bool forceShoot = false;
+    private bool faceRight = false;
 
     public void setBall(GameObject ball) {
         // Assigns the ball to the corresponding player and initializes
@@ -46,14 +50,16 @@ public class PlayerTraining2 : MonoBehaviour {
 
     private void Start() {
         player_rigidbody2D = GetComponent<Rigidbody2D>();
+        player_animator = GetComponent<Animator>();
     }
 
 
     private void Update() {
         // First use the gene to determine the actions taken
         // Game state is { playerX, grounded, stopped }
+        // Converts playerX from [-30, 30] to [-1, 1]
         float[] gameState = new float[] { 
-            player_rigidbody2D.position.x,
+            player_rigidbody2D.position.x / 30,
             System.Convert.ToSingle(grounded),
             System.Convert.ToSingle(stopped)
         };
@@ -77,7 +83,7 @@ public class PlayerTraining2 : MonoBehaviour {
             ball_rigidbody2D.velocity = player_rigidbody2D.velocity;
         }
 
-        if (dribbling && shootForce == -1) {
+        if (dribbling && shootForce <= -0.5) {
             // stop dribbling and hold the ball
             dribbling = false;
             holding = true;
@@ -85,14 +91,21 @@ public class PlayerTraining2 : MonoBehaviour {
         }
 
         if (movementX != 0 && holding && grounded && !stopped) {
-            holding = false;
+            // TODO: re-enable for dribbling animation
+            // holding = false;
             dribbling = true;
             // TODO: add initial dribbling force
         }
+
+        player_animator.SetFloat("Speed", Mathf.Abs(player_animator.velocity.x));
+        player_animator.SetBool("Jump", !grounded);
+        // enable jump shoot animation here
+        // player_animator.SetBool("FaceForward", faceRight == (player_animator.velocity.x > 0));
     }
 
     private void FixedUpdate() {
         if (jump == 1 && grounded && !dribbling) {
+            // jump up and conditionally add sideways displacement
             Vector2 jumpForce = new Vector2(0, jumpParam);
             if (stopped) {
                 jumpForce.x = movementX * jumpParam / 2;
@@ -101,15 +114,55 @@ public class PlayerTraining2 : MonoBehaviour {
             player_rigidbody2D.AddForce(jumpForce, ForceMode2D.Impulse);
         }
 
-        if (shootForce > 0) {
+        if (movementX != 0) {
+            if (grounded) {
+                float vX = movementX * runParam;
+                if (stopped) {
+                    vX = 0f;
+                }
+                player_rigidbody2D.velocity = new Vector2(vX, player_rigidbody2D.velocity.y);
+            }
+        }
+
+        if (shootForce > 0 && holding) {
             // shoot the ball
+            if (player_rigidbody2D.position.x > -10) {
+                // the increase range is [0, 0.2]
+                // which results in a [-0.2, 0.2] fluctuation range
+                error = (player_rigidbody2D.position.x + 10) / 100;
+            }
+            if (forceShoot) {
+                error += 0.3f;
+            }
+            shootForce += Random.Range(-error, error);
+            Vector2 shoot = shootParam * shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
+            ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
+            holding = false;
+            stopped = false;
+            pendingShoot = false;
+            forceShoot = false;
+            error = 0;
         }
     }
 
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.name == "Ground") {
+            grounded = true;
+        }
+        if (pendingShoot) {
+            pendingShoot = false;
+            forceShoot = true;
+        }
+    }
+
+
+    private void OnCollisionExit2D(Collision2D collision) {
+        if (collision.gameObject.name == "Ground") {
             grounded = false;
+            if (holding) {
+                pendingShoot = true;
+            }
         }
     }
 }
