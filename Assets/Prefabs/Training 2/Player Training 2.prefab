@@ -303,3 +303,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
   hand: {fileID: 4401892755955691633}
+  holding: 1

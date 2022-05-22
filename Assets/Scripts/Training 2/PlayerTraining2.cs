@@ -9,10 +9,9 @@ public class PlayerTraining2 : MonoBehaviour {
     //   Shooting further away or while dribbling would have less accuracy
     //   Shooting is instantanious
 
-    private float runParam = 16f;
-    private float jumpParam = 180f;
-    private float shootParam = 0.3f;
-    public float dribbleParam = 0.0002f;
+    public float runParam = 160f;
+    public float jumpParam = 180f;
+    public float shootParam = 0.3f;
 
     public GameObject ball;
     public GameObject hand;
@@ -30,9 +29,9 @@ public class PlayerTraining2 : MonoBehaviour {
     private float jump;
 
     public bool holding = true;
-    private bool dribbling = false;
-    private bool grounded = false;
-    private bool stopped = false;
+    public bool dribbling = false;
+    public bool grounded = false;
+    public bool stopped = false;
 
     private float error = 0;
     private bool pendingShoot = false;
@@ -69,14 +68,12 @@ public class PlayerTraining2 : MonoBehaviour {
         shootForce = gameInput[0];
         shootDirection = gameInput[1];
         movementX = gameInput[2];
-        jump = gameInput[3];
 
         if (shootForce < 0) shootForce = -1;
         shootDirection *= 1440;
         if (movementX > 0.25) movementX = 1;
         else if (movementX < -0.25) movementX = -1;
-        if (jump > 0) jump = 1;
-        else jump = 0;
+
 
         if (holding) {
             ball_rigidbody2D.transform.position = hand.transform.position;
@@ -97,31 +94,18 @@ public class PlayerTraining2 : MonoBehaviour {
             // TODO: add initial dribbling force
         }
 
-        player_animator.SetFloat("Speed", Mathf.Abs(player_animator.velocity.x));
-        player_animator.SetBool("Jump", !grounded);
-        // enable jump shoot animation here
-        // player_animator.SetBool("FaceForward", faceRight == (player_animator.velocity.x > 0));
+        jump = 0;
     }
 
     private void FixedUpdate() {
-        if (jump == 1 && grounded && !dribbling) {
-            // jump up and conditionally add sideways displacement
-            Vector2 jumpForce = new Vector2(0, jumpParam);
+        if (movementX != 0 && grounded) {
+            float vX = movementX * runParam;
             if (stopped) {
-                jumpForce.x = movementX * jumpParam / 2;
+                vX = 0f;
             }
-            grounded = false;
-            player_rigidbody2D.AddForce(jumpForce, ForceMode2D.Impulse);
-        }
-
-        if (movementX != 0) {
-            if (grounded) {
-                float vX = movementX * runParam;
-                if (stopped) {
-                    vX = 0f;
-                }
-                player_rigidbody2D.velocity = new Vector2(vX, player_rigidbody2D.velocity.y);
-            }
+            player_rigidbody2D.velocity = new Vector2(vX, 0);
+        } else {
+            player_rigidbody2D.velocity = new Vector2(0, player_rigidbody2D.velocity.y);
         }
 
         if (shootForce > 0 && holding) {
@@ -131,16 +115,11 @@ public class PlayerTraining2 : MonoBehaviour {
                 // which results in a [-0.2, 0.2] fluctuation range
                 error = (player_rigidbody2D.position.x + 10) / 100;
             }
-            if (forceShoot) {
-                error += 0.3f;
-            }
             shootForce += Random.Range(-error, error);
             Vector2 shoot = shootParam * shootForce * new Vector2(Mathf.Sin(shootDirection * Mathf.Deg2Rad), Mathf.Cos(shootDirection * Mathf.Deg2Rad));
-            ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
+            //ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
             holding = false;
             stopped = false;
-            pendingShoot = false;
-            forceShoot = false;
             error = 0;
         }
     }
@@ -150,19 +129,12 @@ public class PlayerTraining2 : MonoBehaviour {
         if (collision.gameObject.name == "Ground") {
             grounded = true;
         }
-        if (pendingShoot) {
-            pendingShoot = false;
-            forceShoot = true;
-        }
     }
 
 
     private void OnCollisionExit2D(Collision2D collision) {
         if (collision.gameObject.name == "Ground") {
             grounded = false;
-            if (holding) {
-                pendingShoot = true;
-            }
         }
     }
 }

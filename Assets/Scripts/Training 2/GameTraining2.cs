@@ -9,8 +9,8 @@ public class GameTraining2 : MonoBehaviour
 {
     private float genTime = 8f;
     private float genStartTime = 0f;
-    private int populationSize = 300;
-    private int iterationSize = 100;
+    private int populationSize = 30;
+    private int iterationSize = 10;
     private int iterationNum = 0;
 
     private GeneV2[] genes;
@@ -31,7 +31,11 @@ public class GameTraining2 : MonoBehaviour
 
     // Start is called before the first frame update
     private void Start() {
-        string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/Setup.py");
+        genes = new GeneV2[populationSize];
+        players = new GameObject[iterationSize];
+        balls = new GameObject[iterationSize];
+
+        string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 2/Setup.py");
         PythonRunner.RunFile(scriptPath, "unity");
 
         newGeneration(initialPath);
@@ -44,33 +48,56 @@ public class GameTraining2 : MonoBehaviour
     private void Update() {
         if (Time.time - genStartTime > genTime && runUnity) {
             iterationNum++;
-            
             if (iterationNum * iterationSize >= populationSize) {
                 // stops unity and completes Python process
                 runUnity = false;
+                string[] geneText = new string[populationSize];
+                for (var i = 0; i < populationSize; i++) {
+                    geneText[i] = genes[i].ToString();
+                }
+                generation++;
+                File.WriteAllLines(outputPath, geneText);
+                Debug.Log("Generation " + generation + " complete.");
+
+                string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 2/GeneticAlgorithm.py");
+                PythonRunner.RunFile(scriptPath, "unity");
+
+                destroyIteration();
+                iterationNum = 0;
+                newGeneration(nextGenPath);
+                newIteration();
+
+                genStartTime = Time.time;
+                runUnity = true;
             }
 
             else {
-                // continue to next iteration
+                destroyIteration();
+                newIteration();
+                genStartTime = Time.time;
             }
         }
     }
 
-    private void newIteration() {
-        players = new GameObject[iterationSize];
-        balls = new GameObject[iterationSize];
+    private void destroyIteration() {
         for (var i = 0; i < iterationSize; i++) {
-            players[i + (iterationSize * iterationNum)] = Instantiate(player, new Vector3(Random.Range(20, 25), 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining2>().gene = genes[i + (iterationSize * iterationNum)];
-            balls[i + (iterationSize * iterationNum)] = Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining2>().setBall(balls[i + (iterationSize * iterationNum)]);
+            Destroy(players[i]);
+            Destroy(balls[i]);
+        }
+    }
+
+    private void newIteration() {
+        for (var i = 0; i < iterationSize; i++) {
+            //Debug.Log("create " + i);
+            players[i] = Instantiate(player, new Vector3(Random.Range(20, 25), 0, 0), Quaternion.identity);
+            players[i].GetComponent<PlayerTraining2>().gene = genes[i + (iterationSize * iterationNum)];
+            balls[i] = Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
+            players[i].GetComponent<PlayerTraining2>().setBall(balls[i]);
         }
     }
 
     private void newGeneration(string filePath) {
         // read in from file and creates entire population of genes
-        genes = new GeneV2[populationSize];
-
         var data = File.ReadAllLines(filePath);
         for (var i = 0; i < populationSize; i++) {
             genes[i] = new GeneV2();
