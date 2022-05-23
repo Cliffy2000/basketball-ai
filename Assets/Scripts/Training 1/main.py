@@ -57,12 +57,12 @@ def read_generation_count(path=reportPath):
     f.close()
     return generation
 
-'''
+
 def log(data, path=reportPath):
     with open(path, 'a+') as f:
         f.write(data + '\n')
     f.close()
-'''
+
 
 
 def parentDist(parent1, parent2):
@@ -217,18 +217,22 @@ def evalDiversity(populationGenes):
     '''
     # transposes the population gene 2d list
     populationT = list(zip(*populationGenes))
-    report = [sum([st.stdev(position) for position in populationT])]
-    report += [st.mean(position) for position in populationT]
-    return [format(num, '.4f') for num in report]
+    means = [st.mean(list(c)) for c in populationT]
+    total = 0
+    for gene in populationGenes:
+        total += math.sqrt(sum([(g1-g2)**2 for g1,g2 in zip(gene, means)]))
+    return total
 
 
 def writeReport(data, path=reportPath):
-    # Adds the generation number, score and diversity into a file 
-    with open(path, 'a+') as f:
+    generation = read_generation_count()
+
+    with open(path, 'w+') as f:
         genes = [[float(g) for g in gene[0]] for gene in data]
-        totalScore = sum([float(gene[1]) for gene in data])
-        report = evalDiversity(genes)
-        f.write(format(totalScore, '.3f') + ' ' + ' '.join(report) + '\n')
+        scores = [float(gene[1]) for gene in data]
+        totalScore = sum(scores)
+        diversity = evalDiversity(genes)
+        f.write(str(generation) + ' ' + format(totalScore, '.3f') + ' ' + format(st.stdev(scores), '.3f') + ' ' + format(diversity, '.3f') + '\n')
     f.close()
 
 

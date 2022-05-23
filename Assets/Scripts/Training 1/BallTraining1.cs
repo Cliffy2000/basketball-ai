@@ -28,14 +28,14 @@ public class BallTraining1 : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.collider.gameObject.name == "Hoop-Front") {
-            if (!hoop && score != 100) {
+            if (!hoop && score < 100f) {
                 score += 15;
                 hoop = true;
             }
         }
 
         if (collision.collider.gameObject.name == "Board") {
-            if (!board && score != 100) {
+            if (!board && score < 100f) {
                 score += 10;
                 board = true;
             }
@@ -57,7 +57,7 @@ public class BallTraining1 : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
-        if (collision.gameObject.name == "Eval" && !eval && score != 100) {
+        if (collision.gameObject.name == "Eval" && !eval && score < 100f) {
             float exitScore = (-transform.position.x - 6.7f) * 2 + 20;
             score += exitScore;
             eval = true;

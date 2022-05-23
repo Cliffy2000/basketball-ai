@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameTraining1 : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 7.5f;
+    private float genTime = 0.5f;
     private int populationSize = 500;
     private int iterationSize = 250;
     private int iterationNum = 0;

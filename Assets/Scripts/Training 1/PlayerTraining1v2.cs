@@ -77,9 +77,9 @@ public class PlayerTraining1v2 : MonoBehaviour {
                 );
             ball_rigidbody2D.AddForce(shoot, ForceMode2D.Impulse);
 
-            if (Time.time - startTime > 2f) {
+            if (Time.time - startTime > 2f && ball_script.score < 100f) {
                 ball_script.score = 5f;
-            } else {
+            } else if (ball_script.score < 100f) {
                 ball_script.score = 2f;
             }
         }
