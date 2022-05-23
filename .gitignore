@@ -5,7 +5,7 @@
 #/[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
-/Data
+#/Data
 
 ExportedObj/
 .consulo/
