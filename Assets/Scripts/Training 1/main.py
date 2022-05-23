@@ -18,28 +18,11 @@ nextGenPath = 'Data/nextGen.txt'
 result_comparePath = 'Data/result_compare.txt'
 reportPath = 'Data/report.txt'
 
-'''
-# Command line arguments:
-resultPath = '../../../Data/result.txt'
-nextGenPath = '../../../Data/nextGen.txt'
-result_comparePath = '../../../Data/result_compare.txt'
-'''
-
 
 def randomGene():
     # creates a gene with random edge weights as a 1d list
     gene = [(random.random()-0.5)*2 for i in range(netSize)]
     return gene
-
-'''
-def initializePopulation():
-    # returns a list of genes as a 2d list
-    population = []
-    for g in range(popSize):
-        population.append(randomGene())
-    return population
-'''
-
 
 def writePopulation(population, path=nextGenPath, score=''):
     with open(path, "w+") as f:
@@ -163,7 +146,7 @@ def nextGen_weightedCrossOver(data):
     Crossover selector: Select each pair using the scores of the genes as weights.
     Crossover operator: Swap half of the parents to form "ABC456" and "123DEF" children.
     '''
-    crossoverProbability = 0.35
+    crossoverProbability = 0.35 # implicit selection
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data]
     scores = [d[1] for d in data]
@@ -212,7 +195,7 @@ def createNextGen(population):
     population.sort(key=lambda x:float(x[-1]), reverse=True)
     scores = [float(g[-1]) for g in population]
     # Convert population to a list of genes(string -> float)
-    genes = [[float(g) for g in gene[0]] for gene in population]
+    genes =      [[float(g) for g in gene[0]] for gene in population]
     
     newPopulation = nextGen_adaptive_mutation(genes, scores)
 
@@ -247,7 +230,7 @@ newGen = createNewGen(data)
 newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
-
+        
 #if __name__ == 'unity' or __name__ == '__main__':
 if __name__ == 'base':
     data = readPopulation()
