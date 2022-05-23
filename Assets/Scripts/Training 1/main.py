@@ -3,13 +3,14 @@ import os
 import statistics as st
 
 # The size of each population
-popSize = 300
+popSize = 600
 # maximum and minimum score of a gene, used also to calculate performance
-maxScore = 50
+maxScore = 200
 # geneShape is an array indicating the number of nodes in each layer including input and output
-geneShape = [1, 3, 3, 4]
+geneShape = [3, 3, 4, 4]
 # netShape is a 2D array that shows the shape of the array of weights between neighboring layers
-netShape = [geneShape[i]*geneShape[i+1] for i in range(len(geneShape)-1)]
+netSize = sum([geneShape[i]*geneShape[i+1] for i in range(len(geneShape)-1)]) + sum(geneShape[1:])
+netShape = [geneShape[i]*geneShape[i+1]+geneShape[i+1] for i in range(len(geneShape)-1)]
 
 # this path is for the code to run within unity
 resultPath = 'Data/result.txt'
@@ -27,7 +28,7 @@ result_comparePath = '../../../Data/result_compare.txt'
 
 def randomGene():
     # creates a gene with random edge weights as a 1d list
-    gene = [(random.random()-0.5)*2 for i in range(sum(netShape))]
+    gene = [(random.random()-0.5)*2 for i in range(netSize)]
     return gene
 
 '''

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7700938442996108983}
   - component: {fileID: 7700938442996108982}
   - component: {fileID: 7700938442996108985}
-  - component: {fileID: 7042312845705999658}
+  - component: {fileID: 7355542042629984991}
   m_Layer: 7
   m_Name: Ball Training 1
   m_TagString: Untagged
@@ -124,7 +124,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &7042312845705999658
+--- !u!114 &7355542042629984991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,3 +136,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad99e916f973914092e9b7afc4e1815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  score: 1

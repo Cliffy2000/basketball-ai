@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class BallTraining1 : MonoBehaviour
 {
-    public float score;
-    public bool lockScore = false;
-    private float hoopTopTimer = -1f;
-    private float evalTopTimer = -1f;
+    private SpriteRenderer ball_spriteRenderer;
+    private Rigidbody2D ball_rigidbody2D;
+    public float score = 1f;
+    private bool board = false;
+    private bool hoop = false;
+    private bool eval = false;
 
-    private SpriteRenderer ball_SpriteRenderer;
+    private float hoopTopTimer = -1f;
     // Start is called before the first frame update
     void Start()
     {
-        ball_SpriteRenderer = GetComponent<SpriteRenderer>();
+        ball_spriteRenderer = GetComponent<SpriteRenderer>();
+        ball_rigidbody2D = GetComponent<Rigidbody2D>();
         score = 1f;
     }
 
@@ -23,29 +26,41 @@ public class BallTraining1 : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.CompareTag("HoopTop")) hoopTopTimer = Time.time;
-        if (collision.CompareTag("HoopBottom")) {
-            if (Time.time - hoopTopTimer <= 1f && !lockScore) {
-                score = 100f;
-                ball_SpriteRenderer.color = new Color(0, 0.75f, 0, 1);
-                lockScore = true;
-            } else hoopTopTimer = -1f;
-        }
- 
-        if (collision.name == "Eval-Top") evalTopTimer = Time.time;
-        if (collision.name == "Eval-Bottom") {
-            if (Time.time - evalTopTimer <= 1f && !lockScore) {
-                score = Mathf.Max((transform.position.x / -20f) * 40, score);
-                lockScore = true;
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.collider.gameObject.name == "Hoop-Front") {
+            if (!hoop && score != 100) {
+                score += 15;
+                hoop = true;
             }
         }
 
+        if (collision.collider.gameObject.name == "Board") {
+            if (!board && score != 100) {
+                score += 10;
+                board = true;
+            }
+        }
+
+        if (collision.collider.gameObject.name == "Ground") {
+            ball_rigidbody2D.velocity = new Vector2(0, 0);
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.collider.gameObject.CompareTag("Hoop") && !lockScore) {
-            score = Mathf.Max(score, 75f);
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.CompareTag("HoopTop")) hoopTopTimer = Time.time;
+        if (collision.CompareTag("HoopBottom")) {
+            if (Time.time - hoopTopTimer <= 1f) {
+                score = 100f;
+                ball_spriteRenderer.color = new Color(0, 0.75f, 0, 1);
+            } else hoopTopTimer = -1f;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        if (collision.gameObject.name == "Eval" && !eval && score != 100) {
+            float exitScore = (-transform.position.x - 6.7f) * 2 + 20;
+            score += exitScore;
+            eval = true;
         }
     }
 }

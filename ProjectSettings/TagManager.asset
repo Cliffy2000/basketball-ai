@@ -11,6 +11,7 @@ TagManager:
   - Ground
   - HandTag
   - Hoop
+  - Board
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Eval
   - Ball
   - Body
   - Arm

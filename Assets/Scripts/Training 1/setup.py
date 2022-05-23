@@ -4,14 +4,14 @@ import random
 topPercent = 0.25
 maxMutatePercent = 0.4
 # The size of each population
-popSize = 300
+popSize = 600
 geneSize = 2
 # maximum and minimum score of a gene, used also to calculate performance
 maxScore = 100
 # geneShape is an array indicating the number of nodes in each layer including input and output
-geneShape = [1, 3, 3, 4]
+geneShape = [3, 3, 4, 4]
 # netShape is a 2D array that shows the shape of the array of weights between neighboring layers
-netShape = [[geneShape[i],geneShape[i+1]] for i in range(len(geneShape)-1)]
+netSize = sum([geneShape[i]*geneShape[i+1] for i in range(len(geneShape)-1)]) + sum(geneShape[1:])
 
 folderPath = "Data/"
 startingFile = "starting.txt"
@@ -19,7 +19,7 @@ content = os.listdir(folderPath)
 
 def randomGene():
     # creates a gene with random edge weights as a 1d list
-    gene = [(random.random()-0.5)*2 for i in range(sum([m*n for m,n in netShape]))]
+    gene = [(random.random()-0.5)*2 for i in range(netSize)]
     return gene
 
 

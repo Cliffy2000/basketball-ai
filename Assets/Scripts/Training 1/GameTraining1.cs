@@ -8,14 +8,14 @@ using UnityEngine.SceneManagement;
 public class GameTraining1 : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 5f;
-    private int populationSize = 300;
-    private int iterationSize = 100;
+    private float genTime = 7.5f;
+    private int populationSize = 200;
+    private int iterationSize = 200;
     private int iterationNum = 0;
     private int timeScale = 1;
     private Gene[] genes;
     private int generation = 0;
-    private int[] geneShape = new int[] {1,3,3,4};
+    private int[] geneShape = new int[] {3, 3, 4, 4};
     /*  Task: Score while the movement of the player is constant speed
      *  Current gene shape ~ game:
      *  Input Layer: posX of the player
@@ -69,10 +69,12 @@ public class GameTraining1 : MonoBehaviour
         if (Time.time - genStartTime > genTime && !isRunning) {
             iterationNum += 1;
             if (iterationNum * iterationSize >= populationSize) {
+                float totalScore = 0;
                 isRunning = true;
                 string[] geneText = new string[populationSize];
                 for (var i = 0; i < iterationSize; i++) {
                     genes[i + (iterationNum-1)*iterationSize].score = balls[i + (iterationNum - 1) * iterationSize].GetComponent<BallTraining1>().score;
+                    totalScore += genes[i + (iterationNum - 1) * iterationSize].score;
                 }
                 for (var i = 0; i < populationSize; i++) {
                     geneText[i] = genes[i].ToString();
@@ -80,7 +82,7 @@ public class GameTraining1 : MonoBehaviour
                 File.WriteAllLines(output_path, geneText);
                 generation += 1;
 
-                Debug.Log("Generation " + generation + " complete.");
+                Debug.Log("Generation " + generation + " complete. Score: " + totalScore);
                 string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
                 PythonRunner.RunFile(scriptPath, "unity");
 
@@ -122,10 +124,10 @@ public class GameTraining1 : MonoBehaviour
 
     private void createIteration() {
         for (var i = 0; i < iterationSize; i++) {
-            players[i + (iterationSize * iterationNum)] = Instantiate(player, new Vector3(Random.Range(20, 25), 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1>().gene = genes[i + (iterationSize * iterationNum)];
+            players[i + (iterationSize * iterationNum)] = Instantiate(player, new Vector3(Random.Range(-20f, 20f), 0, 0), Quaternion.identity);
+            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1v2>().gene = genes[i + (iterationSize * iterationNum)];
             balls[i + (iterationSize * iterationNum)] = Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1>().setBall(balls[i + (iterationSize * iterationNum)]);
+            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1v2>().setBall(balls[i + (iterationSize * iterationNum)]);
         }
     }
 }
@@ -172,9 +174,11 @@ public class Gene
             filledNodeCount++;
         }
 
+        int prevNodeStart = 0;
         for (var nextLayer=1; nextLayer<geneShape.Length; nextLayer++) {
             // Go through each next layer,
             // calculate the weighted sums as each node value
+            /*
             int nodesInNext = geneShape[nextLayer];
             int nodesInPrev = geneShape[nextLayer - 1];
             // Calculate the value of each node in the next layer
@@ -189,15 +193,32 @@ public class Gene
                     passedEdges++;
                 }
                 // TODO: activation function
-                if ((nodeVals.Length - filledNodeCount > geneShape[geneShape.Length - 1]) &&
-                    (filledNodeCount >= geneShape[0])) {
+                if (filledNodeCount >= geneShape[0]) {
                     // if this node is not on the last output layer
                     nodeVal = sigmoid(nodeVal);
                 }
                 nodeVals[filledNodeCount] = nodeVal;
                 filledNodeCount++;
             }
+            */
+            int prevLayerSize = geneShape[nextLayer - 1];
+            for (int n=0; n<geneShape[nextLayer]; n++) {
+                float nodeVal = 0;
+                for (int i=0; i<prevLayerSize; i++) {
+                    nodeVal += nodeVals[prevNodeStart + i] * gene[passedEdges];
+                    passedEdges++;
+                }
+                nodeVal += gene[passedEdges];
+                passedEdges++;
+                nodeVal = sigmoid(nodeVal);
+                nodeVals[filledNodeCount] = nodeVal;
+                filledNodeCount++;
+            }
+
+            prevNodeStart += geneShape[nextLayer];
         }
+
+        
 
         return nodeVals.Skip(nodeVals.Length - geneShape.Last()).ToArray();
     }
