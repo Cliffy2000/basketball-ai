@@ -3,7 +3,7 @@ import os
 import statistics as st
 import math
 
-CROSSOVER_PROBABILITY = 0.5 # implicit selection, determines what proportion of the next gen comes from crossover
+CROSSOVER_PROBABILITY = 0.7 # implicit selection, determines what proportion of the next gen comes from crossover
 CROSSOVER_OPERATOR_PROBABILITY = 0.3
 MUTATION_PROBABILITY = 0.2
 MUTATION_OPERATOR_PROBABILITY = 0.3 # mutate each gene by how much
@@ -11,7 +11,7 @@ MUTATION_OPERATOR_MAGNITUDE = 0.2
 
 
 # The size of each population
-popSize = 500
+popSize = 250
 # maximum and minimum score of a gene, used also to calculate performance
 # geneShape is an array indicating the number of nodes in each layer including input and output
 geneShape = [3, 3, 4, 4]
@@ -106,7 +106,7 @@ def crossover_operator(parent1, parent2):
 def nextGen_basic(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data[:len(data)//2]]
-    scores = [d[1] for d in data]
+    scores = [d[1] for d in data[:len(data)//2]]
     newGen = []
 
     for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
@@ -130,7 +130,7 @@ def nextGen_basic(data, weightedCrossover=False):
 def nextGen_adaptive_mutation(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data[:len(data)//2]]
-    scores = [d[1] for d in data]
+    scores = [d[1] for d in data[:len(data)//2]]
     newGen = []
 
     mutation_children_queue = []
@@ -166,17 +166,17 @@ def nextGen_dynamic_mutation(data, weightedCrossover=False):
     '''
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data[:len(data)//2]]
-    scores = [d[1] for d in data]
+    scores = [d[1] for d in data[:len(data)//2]]
     newGen = []
 
-    for i in range(int(popSize / 2)):
+    for i in range(int(popSize * CROSSOVER_PROBABILITY/ 2)):
         # Choose two parents based on their performance
         parent1, parent2 = random.choices(genes, k=2, weights=scores) if weightedCrossover else random.choices(genes, k=2)
         child1, child2 = crossover_operator(parent1, parent2)
         newGen.append(child1)
         newGen.append(child2)
     
-    dynamic_mutation_probability = 0.97 ** read_generation_count()
+    dynamic_mutation_probability = 0.6 * 0.96 ** read_generation_count()
     for i in range(len(newGen)):
         if (random.random() < dynamic_mutation_probability):
             newGen[i] = mutation_operator(newGen[i])
@@ -190,12 +190,11 @@ def nextGen_dynamic_mutation(data, weightedCrossover=False):
 def nextGen_tournament_crossover(data):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data[:len(data)//2]]
-    scores = [d[1] for d in data]
     newGen = []
 
     for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
         # Choose two parents based on their performance
-        parents = random.choices(range(popSize), k=6)
+        parents = random.choices(range(popSize // 2), k=6)
         parents.sort()
         parent1, parent2 = genes[parents[0]], genes[parents[1]]
         child1, child2 = crossover_operator(parent1, parent2)
@@ -230,6 +229,7 @@ def evalDiversity(populationGenes):
 def writeReport(data, path=reportPath):
     generation = read_generation_count()
 
+    data = data[:int(popSize * CROSSOVER_PROBABILITY)]
     with open(path, 'a+') as f:
         genes = [[float(g) for g in gene[0]] for gene in data]
         scores = [float(gene[1]) for gene in data]

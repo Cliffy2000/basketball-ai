@@ -2,7 +2,7 @@ import os
 import random
 
 # The size of each population
-popSize = 500
+popSize = 250
 # maximum and minimum score of a gene, used also to calculate performance
 maxScore = 100
 # geneShape is an array indicating the number of nodes in each layer including input and output
