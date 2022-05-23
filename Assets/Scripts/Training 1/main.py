@@ -1,6 +1,11 @@
 import random
 import os
 import statistics as st
+import math
+
+CROSSOVER_PROBABILITY = 0.6 # implicit selection, determines what proportion of the next gen comes from crossover
+CROSSOVER_OPERATOR_PROBABILITY = 0.2 
+MUTATION_OPERATOR_PROBABILITY = 0.1
 
 # The size of each population
 popSize = 600
@@ -43,7 +48,15 @@ def readPopulation(path=resultPath):
     f.close()
     return population
 
-def nextGen_basic(old_population, scores):
+
+def parentDist(parent1, parent2):
+    '''
+    Calculates the distance between two genes
+    '''
+    return math.sqrt(sum([(g1-g2)**2 for g1, g2 in zip(parent1, parent2)]))
+
+
+def nextGen_basic(data):
     '''
     Selection: gets rid of the bottom 1/2 of the population
     Crossover: randomly selects two parents and creates two children with a random crossover point, 
@@ -51,44 +64,38 @@ def nextGen_basic(old_population, scores):
     Mutation: for each gene, mutate at the probability of mutationProbability, 
         if do mutate, randomly choose two values and replace them by a new random value
     '''
-    mutationProbability = 0.25
-    crossoverProbability = 0.65
-    # Selection, only keeping the top 1/2 of the population
-    new_population = old_population[:popSize//2]
-    
-    # Crossover: crossoverProbability means the proportion of the old_population
-    # that was kept that will be mutated
-    # # It is divided by 2 because each crossover takes 2 parents
-    for i in range(int(len(new_population) * crossoverProbability / 2)):
-        # Randomly select two parents
-        parent1 = random.choice(old_population)
-        parent2 = random.choice(old_population)
-        # Crossover the two parents
-        # Randomly select a crossover point
-        crossPoint = random.randint(0, len(parent1)-1)
-        # Create the child
-        child1 = parent1[:crossPoint] + parent2[crossPoint:]
-        child2 = parent2[:crossPoint] + parent1[crossPoint:]
-        # Add the child to the new population
-        new_population.append(child1)
-        new_population.append(child2)
-    print(int(len(new_population) * crossoverProbability / 2))
-    # Mutation: mutationProbability means the proportion of the new_population
-    # that will be mutated. This new_population contains the newly created crossover children
-    for i in range(len(new_population)):
-        rand_posibility = random.random()
-        if rand_posibility < mutationProbability:
-            # Mutate the gene by randomly choosing 8 values and replacing them with new random values
-            replace_index = random.choices(range(len(new_population[i])), k=8)
-            new_population[i][replace_index[0]] = (random.random()-0.5)*2
-            new_population[i][replace_index[1]] = (random.random()-0.5)*2
+    data.sort(key=lambda x: float(x[1]), reverse=True)
+    genes = [d[0] for d in data]
+    scores = [d[1] for d in data]
+    newGen = []
 
-    # Fill the rest of the population with random genes
-    for i in range(len(new_population), popSize):
-        new_population.append(randomGene())
+    for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
+        # Choose two parents based on their performance
+        parent1, parent2 = random.choices(genes, k=2)
+        child1, child2 = [], []
+        for count in netShape:
+            # randomly determine if the two parents exchange the layer
+            swap = (random.random() < CROSSOVER_OPERATOR_PROBABILITY)
+            if swap:
+                child1 += parent1[len(child1):len(child1)+count]
+                child2 += parent2[len(child2):len(child2)+count]
+            else:
+                child1 += parent2[len(child1):len(child1)+count]
+                child2 += parent1[len(child2):len(child2)+count]
+        newGen.append(child1)
+        newGen.append(child2)
     
-    print(len(new_population))
-    return new_population
+    for i in range(len(newGen)):
+        if (random.random() < MUTATION_OPERATOR_PROBABILITY):
+            n = random.choices(range(len(newGen[i])), k=1)
+            for num in n:
+                newGen[i][num] = (random.random()-0.5)*2
+
+    # Mutate the rest of the population by creating random genes
+    for i in range(popSize - len(newGen)):
+        newGen.append(randomGene())
+    
+    return newGen
 
 def nextGen_adaptive_mutation(old_population, scores):
     '''
@@ -100,59 +107,51 @@ def nextGen_adaptive_mutation(old_population, scores):
         if do mutate, randomly choose two values and replace them by a new random value
     '''
     minMP = 0.2 # minimum mutation probability
-    maxMP = 0.7    # maximum mutation probability
-    MP_interval = (maxMP - minMP) / popSize
-    mutationProbability = [minMP + i*MP_interval for i in range(popSize)]
-    crossoverProbability = 1
-    # Selection, only keeping the top 1/3 of the population
-    new_population = old_population[:popSize//1.5]
-    
-    # Crossover: crossoverProbability means the proportion of the old_population
-    # that was kept that will be mutated
-    # # It is divided by 2 because each crossover takes 2 parents
-    for i in range(int(len(new_population) * crossoverProbability / 2)):
-        # Randomly select two parents
-        parent1 = random.choice(old_population)
-        parent2 = random.choice(old_population)
-        # Crossover the two parents
-        # Randomly select a crossover point
-        crossPoint = random.randint(0, len(parent1)-1)
-        # Create the child
-        child1 = parent1[:crossPoint] + parent2[crossPoint:]
-        child2 = parent2[:crossPoint] + parent1[crossPoint:]
-        # Add the child to the new population
-        new_population.append(child1)
-        new_population.append(child2)
+    maxMP = 0.7 # maximum mutation probability
+    data.sort(key=lambda x: float(x[1]), reverse=True)
+    genes = [d[0] for d in data]
+    scores = [d[1] for d in data]
+    newGen = []
 
-    # Fill the rest of the population with random genes
-    for i in range(len(new_population), popSize):
-        new_population.append(randomGene())
-
-    # Mutation: mutationProbability means the proportion of the new_population
-    # that will be mutated. This new_population contains the newly created crossover children
-    for i in range(len(new_population)):
-        rand_posibility = random.random()
-        if rand_posibility < mutationProbability[i]:
-            # Mutate the gene by randomly choosing 10 values and replacing them with new random values
-            replace_index = random.choices(range(len(new_population[i])), k=10)
-            new_population[i][replace_index[0]] = (random.random()-0.5)*2
-            new_population[i][replace_index[1]] = (random.random()-0.5)*2
+    mutation_children_queue = []
+    for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
+        # Choose two parents based on their performance
+        parent1, parent2 = random.choices(genes, k=2)
+        child1, child2 = [], []
+        for count in netShape:
+            # randomly determine if the two parents exchange the layer
+            swap = (random.random() < CROSSOVER_OPERATOR_PROBABILITY)
+            if swap:
+                child1 += parent1[len(child1):len(child1)+count]
+                child2 += parent2[len(child2):len(child2)+count]
+            else:
+                child1 += parent2[len(child1):len(child1)+count]
+                child2 += parent1[len(child2):len(child2)+count]
+        
+        newGen.append(child1)
+        mutation_children_queue.append([child2, parentDist(parent1, parent2)])
     
-    print(len(new_population))
-    return new_population
+    mutation_children_queue.sort(key=lambda x: x[1])
+
+    newGen += [g[0] for g in mutation_children_queue]
+    
+    # Mutate the rest of the population by creating random genes
+    for i in range(popSize - len(newGen)):
+        newGen.append(randomGene())
+    
+    return newGen
 
 def nextGen_weightedCrossOver(data):
     '''
     Crossover selector: Select each pair using the scores of the genes as weights.
     Crossover operator: Swap half of the parents to form "ABC456" and "123DEF" children.
     '''
-    crossoverProbability = 0.35 # implicit selection
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data]
     scores = [d[1] for d in data]
     newGen = []
 
-    for i in range(int(popSize * crossoverProbability / 2)):
+    for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
         # Choose two parents based on their performance
         parent1, parent2 = random.choices(genes, k=2, weights=scores)
         child1, child2 = [], []
@@ -160,7 +159,7 @@ def nextGen_weightedCrossOver(data):
         # newGen.append(parent2)
         for count in netShape:
             # randomly determine if the two parents exchange the layer
-            swap = (random.random() > 0.8)
+            swap = (random.random() < CROSSOVER_OPERATOR_PROBABILITY)
             if swap:
                 child1 += parent1[len(child1):len(child1)+count]
                 child2 += parent2[len(child2):len(child2)+count]
@@ -171,7 +170,7 @@ def nextGen_weightedCrossOver(data):
         newGen.append(child2)
     
     for i in range(len(newGen)):
-        if (random.random() > 0.9):
+        if (random.random() < MUTATION_OPERATOR_PROBABILITY):
             n = random.choices(range(len(newGen[i])), k=1)
             for num in n:
                 newGen[i][num] = (random.random()-0.5)*2
