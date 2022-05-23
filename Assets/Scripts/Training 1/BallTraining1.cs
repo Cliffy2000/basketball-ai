@@ -41,9 +41,6 @@ public class BallTraining1 : MonoBehaviour
             }
         }
 
-        if (collision.collider.gameObject.name == "Ground") {
-            ball_rigidbody2D.velocity = new Vector2(0, 0);
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

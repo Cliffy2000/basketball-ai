@@ -81,11 +81,11 @@ public class GameTraining1 : MonoBehaviour
                 Debug.Log("Generation " + generation + " complete. Score: " + totalScore);
                 
                 string scriptPath = Path.Combine(Application.dataPath, python_path);
-                //PythonRunner.RunFile(scriptPath, "base");
+                PythonRunner.RunFile(scriptPath, "base");
                 //PythonRunner.RunFile(scriptPath, "adaptiveMutation");
                 //PythonRunner.RunFile(scriptPath, "dynamicMutation");
                 //PythonRunner.RunFile(scriptPath, "tournamentCrossover");
-                PythonRunner.RunFile(scriptPath, "WeightedCrossover");
+                //PythonRunner.RunFile(scriptPath, "WeightedCrossover");
 
 
                 //Destoy previous population

@@ -105,7 +105,7 @@ def crossover_operator(parent1, parent2):
 
 def nextGen_basic(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
-    genes = [d[0] for d in data]
+    genes = [d[0] for d in data[:len(data)//2]]
     scores = [d[1] for d in data]
     newGen = []
 
@@ -129,7 +129,7 @@ def nextGen_basic(data, weightedCrossover=False):
 
 def nextGen_adaptive_mutation(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
-    genes = [d[0] for d in data]
+    genes = [d[0] for d in data[:len(data)//2]]
     scores = [d[1] for d in data]
     newGen = []
 
@@ -165,7 +165,7 @@ def nextGen_dynamic_mutation(data, weightedCrossover=False):
     Slowly decrease the mutation probability as the generation increases.
     '''
     data.sort(key=lambda x: float(x[1]), reverse=True)
-    genes = [d[0] for d in data]
+    genes = [d[0] for d in data[:len(data)//2]]
     scores = [d[1] for d in data]
     newGen = []
 
@@ -189,7 +189,7 @@ def nextGen_dynamic_mutation(data, weightedCrossover=False):
 
 def nextGen_tournament_crossover(data):
     data.sort(key=lambda x: float(x[1]), reverse=True)
-    genes = [d[0] for d in data]
+    genes = [d[0] for d in data[:len(data)//2]]
     scores = [d[1] for d in data]
     newGen = []
 
