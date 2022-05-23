@@ -8,9 +8,10 @@ using UnityEngine.SceneManagement;
 public class GameTraining1 : MonoBehaviour
 {
     private float genStartTime = 0f;
-    private float genTime = 0.5f;
-    private int populationSize = 500;
-    private int iterationSize = 250;
+    private float genTime = 5f;
+    private int populationSize = 250;
+    //private int iterationSize = 250;
+    private int iterationLimit = 3;
     private int iterationNum = 0;
     private int timeScale = 1;
     private Gene[] genes;
@@ -70,13 +71,13 @@ public class GameTraining1 : MonoBehaviour
 
         if (Time.time - genStartTime > genTime && !isRunning) {
             iterationNum += 1;
-            if (iterationNum * iterationSize >= populationSize) {
+            if (iterationNum >= iterationLimit) {
                 float totalScore = 0;
                 isRunning = true;
                 string[] geneText = new string[populationSize];
-                for (var i = 0; i < iterationSize; i++) {
-                    genes[i + (iterationNum-1)*iterationSize].score = balls[i + (iterationNum - 1) * iterationSize].GetComponent<BallTraining1>().score;
-                    totalScore += genes[i + (iterationNum - 1) * iterationSize].score;
+                for (var i = 0; i < populationSize; i++) {
+                    genes[i].score += balls[i].GetComponent<BallTraining1>().score;
+                    totalScore += genes[i].score;
                 }
                 for (var i = 0; i < populationSize; i++) {
                     geneText[i] = genes[i].ToString();
@@ -115,8 +116,8 @@ public class GameTraining1 : MonoBehaviour
                 isRunning = false;
             } 
             else {
-                for (var i = 0; i < iterationSize; i++) {
-                    genes[i + (iterationNum - 1) * iterationSize].score = balls[i + (iterationNum - 1) * iterationSize].GetComponent<BallTraining1>().score;
+                for (var i = 0; i < populationSize; i++) {
+                    genes[i].score += balls[i].GetComponent<BallTraining1>().score;
                 }
                 for (var i = 0; i < populationSize; i++) {
                     Destroy(players[i]);
@@ -132,11 +133,11 @@ public class GameTraining1 : MonoBehaviour
     }
 
     private void createIteration() {
-        for (var i = 0; i < iterationSize; i++) {
-            players[i + (iterationSize * iterationNum)] = Instantiate(player, new Vector3(Random.Range(-20f, 20f), 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1v2>().gene = genes[i + (iterationSize * iterationNum)];
-            balls[i + (iterationSize * iterationNum)] = Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
-            players[i + (iterationSize * iterationNum)].GetComponent<PlayerTraining1v2>().setBall(balls[i + (iterationSize * iterationNum)]);
+        for (var i = 0; i < populationSize; i++) {
+            players[i] = Instantiate(player, new Vector3(Random.Range(-20f, 20f), -9f, 0), Quaternion.identity);
+            players[i].GetComponent<PlayerTraining1v2>().gene = genes[i];
+            balls[i] = Instantiate(ball, new Vector3(0, 0, 2), Quaternion.identity);
+            players[i].GetComponent<PlayerTraining1v2>().setBall(balls[i]);
         }
     }
 }
@@ -146,6 +147,7 @@ public class Gene
     int generation;
     int[] geneShape;
     public float score = 1;
+    public float allScore = 0;
     float[] gene; // an array of all the weights
 
 

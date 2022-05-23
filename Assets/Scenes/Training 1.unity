@@ -202,7 +202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 808387335020835292, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 808387335020835292, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_LocalRotation.w
@@ -235,14 +235,6 @@ PrefabInstance:
     - target: {fileID: 808387335020835294, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
       propertyPath: m_Name
       value: Rack
-      objectReference: {fileID: 0}
-    - target: {fileID: 808387336718571870, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
-      propertyPath: m_Name
-      value: Board
-      objectReference: {fileID: 0}
-    - target: {fileID: 808387336718571870, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
-      propertyPath: m_TagString
-      value: Board
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b9ac5adfd68e06438e6d1051fb9acca, type: 3}
