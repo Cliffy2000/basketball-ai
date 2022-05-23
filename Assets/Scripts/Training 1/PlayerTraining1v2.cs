@@ -79,6 +79,8 @@ public class PlayerTraining1v2 : MonoBehaviour {
 
             if (Time.time - startTime > 2f) {
                 ball_script.score = 5f;
+            } else {
+                ball_script.score = 2f;
             }
         }
 

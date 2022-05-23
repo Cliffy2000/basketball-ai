@@ -1,11 +1,8 @@
 import os
 import random
 
-topPercent = 0.25
-maxMutatePercent = 0.4
 # The size of each population
-popSize = 600
-geneSize = 2
+popSize = 500
 # maximum and minimum score of a gene, used also to calculate performance
 maxScore = 100
 # geneShape is an array indicating the number of nodes in each layer including input and output

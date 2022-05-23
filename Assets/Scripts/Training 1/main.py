@@ -11,7 +11,7 @@ MUTATION_OPERATOR_MAGNITUDE = 0.2
 
 
 # The size of each population
-popSize = 600
+popSize = 500
 # maximum and minimum score of a gene, used also to calculate performance
 # geneShape is an array indicating the number of nodes in each layer including input and output
 geneShape = [3, 3, 4, 4]
@@ -68,12 +68,16 @@ def mutation_operator(gene):
     newGene = []
     for g in gene:
         if (random.random() < MUTATION_OPERATOR_PROBABILITY):
-            newG = g + random.randrange(-MUTATION_OPERATOR_MAGNITUDE, MUTATION_OPERATOR_MAGNITUDE)
+            newG = g + random.uniform(-MUTATION_OPERATOR_MAGNITUDE, MUTATION_OPERATOR_MAGNITUDE)
             newG = min(1, max(-1, newG))
-        newGene.append(newG)
-    return gene
+            newGene.append(newG)
+        else:
+            newGene.append(g)
+    return newGene
 
 def crossover_operator(parent1, parent2):
+    child1 = []
+    child2 = []
     # randomly determine if the two parents exchange the layer
     for count in netShape:
         # randomly determine if the two parents exchange the layer
