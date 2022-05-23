@@ -34,6 +34,7 @@ public class GameTraining1 : MonoBehaviour
     string input_path = @"Data/nextGen.txt";
     string bestGen_path = @"Data/best.txt";
     string score_path = @"Data/scores.txt";
+    string python_path = @"Scripts/Training 1/main.py";
 
 
     private bool isRunning = false;
@@ -46,7 +47,11 @@ public class GameTraining1 : MonoBehaviour
         balls = new GameObject[populationSize];
 
         string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/setup.py");
-        PythonRunner.RunFile(scriptPath, "unity");
+        PythonRunner.RunFile(scriptPath, "base");
+        //PythonRunner.RunFile(scriptPath, "adaptiveMutation");
+        //PythonRunner.RunFile(scriptPath, "dynamicMutation");
+        //PythonRunner.RunFile(scriptPath, "EuclideanDistance");
+        //PythonRunner.RunFile(scriptPath, "WeightedCrossover");
 
         var lines = File.ReadAllLines(starting_path);
 
@@ -83,7 +88,7 @@ public class GameTraining1 : MonoBehaviour
                 generation += 1;
 
                 Debug.Log("Generation " + generation + " complete. Score: " + totalScore);
-                string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/main.py");
+                string scriptPath = Path.Combine(Application.dataPath, python_path);
                 PythonRunner.RunFile(scriptPath, "unity");
 
                 //Destoy previous population

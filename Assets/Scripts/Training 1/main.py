@@ -199,6 +199,11 @@ def nextGen_weightedCrossOver(data):
     
     return newGen
 
+def nextGen_dynamic_mutation(data):
+    return nextGen_basic(data)
+
+def nextGen_euclidian_distance(data):
+    return nextGen_basic(data)
 
 def createNextGen(population):
     # must take in processed population from readPopulation()
@@ -243,7 +248,28 @@ newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
 writeData(newGenText)
 '''
 
-if __name__ == 'unity' or __name__ == '__main__':
+#if __name__ == 'unity' or __name__ == '__main__':
+if __name__ == 'base':
+    data = readPopulation()
+    writeReport(data)
+    newGeneration = nextGen_basic(data)
+    writePopulation(newGeneration)
+elif __name__ == 'adaptiveMutation':
+    data = readPopulation()
+    writeReport(data)
+    newGeneration = nextGen_adaptive_mutation(data)
+    writePopulation(newGeneration)
+elif __name__ == 'dynamicMutation':
+    data = readPopulation()
+    writeReport(data)
+    newGeneration = nextGen_dynamic_mutation(data)
+    writePopulation(newGeneration)
+elif __name__ == 'EuclideanDistance':
+    data = readPopulation()
+    writeReport(data)
+    newGeneration = nextGen_euclidian_distance(data)
+    writePopulation(newGeneration)
+elif __name__ == 'WeightedCrossover':
     data = readPopulation()
     writeReport(data)
     newGeneration = nextGen_weightedCrossOver(data)
