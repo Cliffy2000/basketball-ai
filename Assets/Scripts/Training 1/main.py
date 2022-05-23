@@ -4,9 +4,9 @@ import statistics as st
 import math
 
 CROSSOVER_PROBABILITY = 0.6 # implicit selection, determines what proportion of the next gen comes from crossover
-CROSSOVER_OPERATOR_PROBABILITY = 0.2
+CROSSOVER_OPERATOR_PROBABILITY = 0.3
 MUTATION_PROBABILITY = 0.2
-MUTATION_OPERATOR_PROBABILITY = 0.2
+MUTATION_OPERATOR_PROBABILITY = 0.3 # mutate each gene by how much
 MUTATION_OPERATOR_MAGNITUDE = 0.2
 
 
