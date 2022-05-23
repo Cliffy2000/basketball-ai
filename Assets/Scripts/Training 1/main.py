@@ -48,6 +48,10 @@ def readPopulation(path=resultPath):
     f.close()
     return population
 
+def log(data, path=reportPath):
+    with open(path, 'a+') as f:
+        f.write(data + '\n')
+    f.close()
 
 def parentDist(parent1, parent2):
     '''
