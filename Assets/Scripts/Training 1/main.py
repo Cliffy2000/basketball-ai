@@ -50,10 +50,20 @@ def readPopulation(path=resultPath):
     f.close()
     return population
 
+def read_generation_count(path=reportPath):
+    with open(path, 'r') as f:
+        result = f.readlines()
+        generation = len(result)
+    f.close()
+    return generation
+
+'''
 def log(data, path=reportPath):
     with open(path, 'a+') as f:
         f.write(data + '\n')
     f.close()
+'''
+
 
 def parentDist(parent1, parent2):
     '''
@@ -90,14 +100,7 @@ def crossover_operator(parent1, parent2):
             child2 += parent1[len(child2):len(child2)+count]
     return child1, child2
 
-def nextGen_basic(data):
-    '''
-    Selection: gets rid of the bottom 1/2 of the population
-    Crossover: randomly selects two parents and creates two children with a random crossover point, 
-        this is repeated len(new_population) * crossoverProbability / 2 times
-    Mutation: for each gene, mutate at the probability of mutationProbability, 
-        if do mutate, randomly choose two values and replace them by a new random value
-    '''
+def nextGen_basic(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data]
     scores = [d[1] for d in data]
@@ -105,7 +108,8 @@ def nextGen_basic(data):
 
     for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
         # Choose two parents based on their performance
-        parent1, parent2 = random.choices(genes, k=2)
+        parent1, parent2 = random.choices(genes, k=2, weights=scores) if weightedCrossover else random.choices(genes, k=2)
+
         child1, child2 = crossover_operator(parent1, parent2)
         newGen.append(child1)
         newGen.append(child2)
@@ -116,20 +120,11 @@ def nextGen_basic(data):
 
     # Fill the rest of the population by creating random genes
     for i in range(popSize - len(newGen)):
-        #log("popSize: " + popSize + ", len(newGen): " + len(newGen))
         newGen.append(randomGene())
     
     return newGen
 
-def nextGen_adaptive_mutation(data):
-    '''
-    Selection: gets rid of the bottom 1/2 of the population
-    Crossover: randomly selects two parents and creates two children with a random crossover point, 
-        this is repeated len(new_population) * crossoverProbability / 2 times
-    Mutation: for each gene, mutate at the probability of mutationProbability ACCORDING TO THE SCORE, 
-        The mutation probability is evenly distributed across the population, between minMP and maxMP
-        if do mutate, randomly choose two values and replace them by a new random value
-    '''
+def nextGen_adaptive_mutation(data, weightedCrossover=False):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data]
     scores = [d[1] for d in data]
@@ -138,7 +133,7 @@ def nextGen_adaptive_mutation(data):
     mutation_children_queue = []
     for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
         # Choose two parents based on their performance
-        parent1, parent2 = random.choices(genes, k=2)
+        parent1, parent2 = random.choices(genes, k=2, weights=scores) if weightedCrossover else random.choices(genes, k=2)
         child1, child2 = crossover_operator(parent1, parent2)
         
         newGen.append(child1)
@@ -162,11 +157,34 @@ def nextGen_adaptive_mutation(data):
     
     return newGen
 
-def nextGen_weightedCrossOver(data):
+def nextGen_dynamic_mutation(data, weightedCrossover=False):
     '''
-    Crossover selector: Select each pair using the scores of the genes as weights.
-    Crossover operator: Swap half of the parents to form "ABC456" and "123DEF" children.
+    Slowly decrease the mutation probability as the generation increases.
     '''
+    data.sort(key=lambda x: float(x[1]), reverse=True)
+    genes = [d[0] for d in data]
+    scores = [d[1] for d in data]
+    newGen = []
+
+    for i in range(int(popSize / 2)):
+        # Choose two parents based on their performance
+        parent1, parent2 = random.choices(genes, k=2, weights=scores) if weightedCrossover else random.choices(genes, k=2)
+        child1, child2 = crossover_operator(parent1, parent2)
+        newGen.append(child1)
+        newGen.append(child2)
+    
+    dynamic_mutation_probability = 0.97 ** read_generation_count()
+    for i in range(len(newGen)):
+        if (random.random() < dynamic_mutation_probability):
+            newGen[i] = mutation_operator(newGen[i])
+
+    # Fill the rest of the population by creating random genes
+    for i in range(popSize - len(newGen)):
+        newGen.append(randomGene())
+    
+    return newGen
+
+def nextGen_tournament_crossover(data):
     data.sort(key=lambda x: float(x[1]), reverse=True)
     genes = [d[0] for d in data]
     scores = [d[1] for d in data]
@@ -174,7 +192,9 @@ def nextGen_weightedCrossOver(data):
 
     for i in range(int(popSize * CROSSOVER_PROBABILITY / 2)):
         # Choose two parents based on their performance
-        parent1, parent2 = random.choices(genes, k=2, weights=scores)
+        parents = random.choices(range(popSize), k=6)
+        parents.sort()
+        parent1, parent2 = genes[parents[0]], genes[parents[1]]
         child1, child2 = crossover_operator(parent1, parent2)
         newGen.append(child1)
         newGen.append(child2)
@@ -187,26 +207,7 @@ def nextGen_weightedCrossOver(data):
     for i in range(popSize - len(newGen)):
         newGen.append(randomGene())
     
-    return newGen
-
-def nextGen_dynamic_mutation(data):
-    return nextGen_basic(data)
-
-def nextGen_euclidian_distance(data):
-    return nextGen_basic(data)
-
-def createNextGen(population):
-    # must take in processed population from readPopulation()
-    
-    # Sort the population by score
-    population.sort(key=lambda x:float(x[-1]), reverse=True)
-    scores = [float(g[-1]) for g in population]
-    # Convert population to a list of genes(string -> float)
-    genes =      [[float(g) for g in gene[0]] for gene in population]
-    
-    newPopulation = nextGen_adaptive_mutation(genes, scores)
-
-    return newPopulation        
+    return newGen     
 
 def evalDiversity(populationGenes):
     '''
@@ -231,12 +232,6 @@ def writeReport(data, path=reportPath):
     f.close()
 
 
-'''
-data = readData()
-newGen = createNewGen(data)
-newGenText = ['{} {:.4f}'.format(g[0], g[1]) for g in newGen]
-writeData(newGenText)
-'''
         
 #if __name__ == 'unity' or __name__ == '__main__':
 if __name__ == 'base':
@@ -254,13 +249,17 @@ elif __name__ == 'dynamicMutation':
     writeReport(data)
     newGeneration = nextGen_dynamic_mutation(data)
     writePopulation(newGeneration)
-elif __name__ == 'EuclideanDistance':
+elif __name__ == 'tournamentCrossover':
     data = readPopulation()
     writeReport(data)
-    newGeneration = nextGen_euclidian_distance(data)
+    newGeneration = nextGen_tournament_crossover(data)
     writePopulation(newGeneration)
 elif __name__ == 'WeightedCrossover':
+    '''
+    Crossover selector: Select each pair using the scores of the genes as weights.
+    Crossover operator: Swap half of the parents to form "ABC456" and "123DEF" children.
+    '''
     data = readPopulation()
     writeReport(data)
-    newGeneration = nextGen_weightedCrossOver(data)
+    newGeneration = nextGen_basic(data, weightedCrossover=True)
     writePopulation(newGeneration)
