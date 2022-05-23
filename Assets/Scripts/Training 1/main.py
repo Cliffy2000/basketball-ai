@@ -10,7 +10,6 @@ MUTATION_OPERATOR_PROBABILITY = 0.1
 # The size of each population
 popSize = 600
 # maximum and minimum score of a gene, used also to calculate performance
-maxScore = 200
 # geneShape is an array indicating the number of nodes in each layer including input and output
 geneShape = [3, 3, 4, 4]
 # netShape is a 2D array that shows the shape of the array of weights between neighboring layers
@@ -97,6 +96,7 @@ def nextGen_basic(data):
 
     # Mutate the rest of the population by creating random genes
     for i in range(popSize - len(newGen)):
+        #log("popSize: " + popSize + ", len(newGen): " + len(newGen))
         newGen.append(randomGene())
     
     return newGen

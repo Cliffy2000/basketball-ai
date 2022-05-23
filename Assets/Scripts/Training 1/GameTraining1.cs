@@ -9,8 +9,8 @@ public class GameTraining1 : MonoBehaviour
 {
     private float genStartTime = 0f;
     private float genTime = 7.5f;
-    private int populationSize = 200;
-    private int iterationSize = 200;
+    private int populationSize = 600;
+    private int iterationSize = 300;
     private int iterationNum = 0;
     private int timeScale = 1;
     private Gene[] genes;
@@ -47,11 +47,7 @@ public class GameTraining1 : MonoBehaviour
         balls = new GameObject[populationSize];
 
         string scriptPath = Path.Combine(Application.dataPath, "Scripts/Training 1/setup.py");
-        PythonRunner.RunFile(scriptPath, "base");
-        //PythonRunner.RunFile(scriptPath, "adaptiveMutation");
-        //PythonRunner.RunFile(scriptPath, "dynamicMutation");
-        //PythonRunner.RunFile(scriptPath, "EuclideanDistance");
-        //PythonRunner.RunFile(scriptPath, "WeightedCrossover");
+        PythonRunner.RunFile(scriptPath);
 
         var lines = File.ReadAllLines(starting_path);
 
@@ -89,7 +85,12 @@ public class GameTraining1 : MonoBehaviour
 
                 Debug.Log("Generation " + generation + " complete. Score: " + totalScore);
                 string scriptPath = Path.Combine(Application.dataPath, python_path);
-                PythonRunner.RunFile(scriptPath, "unity");
+                PythonRunner.RunFile(scriptPath, "base");
+                //PythonRunner.RunFile(scriptPath, "adaptiveMutation");
+                //PythonRunner.RunFile(scriptPath, "dynamicMutation");
+                //PythonRunner.RunFile(scriptPath, "EuclideanDistance");
+                //PythonRunner.RunFile(scriptPath, "WeightedCrossover");
+
 
                 //Destoy previous population
                 for (var i = 0; i < populationSize; i++) {
