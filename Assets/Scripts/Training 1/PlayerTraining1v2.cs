@@ -36,13 +36,13 @@ public class PlayerTraining1v2 : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         // First use the gene to determine the actions taken
-        // Game state is { playerX, playerSpeed}
+        // Game state is { playerX, playerSpeed, time}
         // Converts playerX from [-30, 30] to [-1, 1]
-        // Converts playerX from [-12, 12] to [-1, 1]
+        // Converts velocityX from [-10, 10] to [-1, 1]
         float[] gameState = new float[] {
             player_rigidbody2D.position.x / 30,
             player_rigidbody2D.velocity.x / 10,
-            (Time.time - startTime) / 7.5f
+            (Time.time - startTime) / 5f
         };
 
         float[] gameInput = gene.feedForward(gameState);

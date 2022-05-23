@@ -3,7 +3,7 @@ import os
 import statistics as st
 import math
 
-CROSSOVER_PROBABILITY = 0.6 # implicit selection, determines what proportion of the next gen comes from crossover
+CROSSOVER_PROBABILITY = 0.5 # implicit selection, determines what proportion of the next gen comes from crossover
 CROSSOVER_OPERATOR_PROBABILITY = 0.3
 MUTATION_PROBABILITY = 0.2
 MUTATION_OPERATOR_PROBABILITY = 0.3 # mutate each gene by how much
@@ -51,18 +51,21 @@ def readPopulation(path=resultPath):
     return population
 
 def read_generation_count(path=reportPath):
-    with open(path, 'r') as f:
-        result = f.readlines()
-        generation = len(result)
-    f.close()
-    return generation
+    try:
+        with open(path, 'r') as f:
+            result = f.readlines()
+            generation = len(result)
+        f.close()
+        return generation+1
+    except:
+        return 1
 
-
+'''
 def log(data, path=reportPath):
     with open(path, 'a+') as f:
         f.write(data + '\n')
     f.close()
-
+'''
 
 
 def parentDist(parent1, parent2):
@@ -227,7 +230,7 @@ def evalDiversity(populationGenes):
 def writeReport(data, path=reportPath):
     generation = read_generation_count()
 
-    with open(path, 'w+') as f:
+    with open(path, 'a+') as f:
         genes = [[float(g) for g in gene[0]] for gene in data]
         scores = [float(gene[1]) for gene in data]
         totalScore = sum(scores)
@@ -236,8 +239,6 @@ def writeReport(data, path=reportPath):
     f.close()
 
 
-        
-#if __name__ == 'unity' or __name__ == '__main__':
 if __name__ == 'base':
     data = readPopulation()
     writeReport(data)

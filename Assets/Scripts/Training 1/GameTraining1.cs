@@ -17,13 +17,7 @@ public class GameTraining1 : MonoBehaviour
     private Gene[] genes;
     private int generation = 0;
     private int[] geneShape = new int[] {3, 3, 4, 4};
-    /*  Task: Score while the movement of the player is constant speed
-     *  Current gene shape ~ game:
-     *  Input Layer: posX of the player
-     *  Output Layer: shootAngle, shootForce, shootTrigger
-     */
-    private int[] newShape;
-    private float topScore = 0;
+
 
     public GameObject player;
     public GameObject ball;
@@ -36,7 +30,6 @@ public class GameTraining1 : MonoBehaviour
     string bestGen_path = @"Data/best.txt";
     string score_path = @"Data/scores.txt";
     string python_path = @"Scripts/Training 1/main.py";
-    string report_path = @"Data/report.txt";
 
 
     private bool isRunning = false;
@@ -86,14 +79,13 @@ public class GameTraining1 : MonoBehaviour
                 generation += 1;
 
                 Debug.Log("Generation " + generation + " complete. Score: " + totalScore);
-                File.WriteAllText(report_path, generation + " " + totalScore);
                 
                 string scriptPath = Path.Combine(Application.dataPath, python_path);
-                //PythonRunner.RunFile(scriptPath, "base");
+                PythonRunner.RunFile(scriptPath, "base");
                 //PythonRunner.RunFile(scriptPath, "adaptiveMutation");
                 //PythonRunner.RunFile(scriptPath, "dynamicMutation");
                 //PythonRunner.RunFile(scriptPath, "tournamentCrossover");
-                PythonRunner.RunFile(scriptPath, "WeightedCrossover");
+                //PythonRunner.RunFile(scriptPath, "WeightedCrossover");
 
 
                 //Destoy previous population
